@@ -1,0 +1,42 @@
+{
+  "name": "@datasqrl/acorn-typescript",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "release": "release-it --'hooks.before:init=\"npm run build && npm run test\"'",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{json,ts,md}": "prettier --write --ignore-unknown"
+  },
+  "main": "index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DataSQRL/acorn-typescript.git"
+  },
+  "author": "Dmytro Khyzhniak",
+  "bugs": {
+    "url": "https://github.com/DataSQRL/acorn-typescript/issues"
+  },
+  "homepage": "https://github.com/DataSQRL/acorn-typescript#readme",
+  "license": "ISC",
+  "devDependencies": {
+    "@swc/core": "^1.10.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.2.11",
+    "prettier": "^3.4.2",
+    "release-it": "^17.10.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}
