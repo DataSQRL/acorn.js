@@ -10,7 +10,7 @@ export class ValidationResult {
 
   constructor(
     public errorType: ErrorType,
-    public errorMessage?: string
+    public errorMessage?: string,
   ) {}
 
   isValid() {

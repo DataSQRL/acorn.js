@@ -15,7 +15,7 @@ export class FunctionUtil {
   static addOrOverrideContext<T extends {}>(
     argumentsNode: Record<string, unknown> | null,
     contextKeys: Set<string>,
-    context: Context<T>
+    context: Context<T>,
   ): Record<string, unknown> {
     const copyJsonNode = argumentsNode ? { ...argumentsNode } : {};
 

@@ -22,7 +22,7 @@ function getFunctionsFromPath(path: string): APIFunction[] {
 function snapshotFunctions(functions: APIFunction[], testName: string): void {
   TestUtil.snapshotTestOrCreate(
     JSON.stringify(functions, null, 2),
-    `snapshot/${testName}.json`
+    `snapshot/${testName}.json`,
   );
 }
 
@@ -32,22 +32,22 @@ describe("GraphQLSchemaConverter Tests", () => {
       TestUtil.getAssetFileAsString("graphql/nutshop-schema.graphqls"),
       new StandardAPIFunctionFactory(apiExecutor, new Set(["customerid"])),
       new GraphQLSchemaConverterConfig(
-        GraphQLSchemaConverterConfig.ignorePrefix("internal")
-      )
+        GraphQLSchemaConverterConfig.ignorePrefix("internal"),
+      ),
     );
 
     const functions = converter.convertSchema();
     expect(functions).toHaveLength(5);
 
     const ordersFunction = functions.find(
-      (f) => f.getName().toLowerCase() === "orders"
+      (f) => f.getName().toLowerCase() === "orders",
     );
     expect(ordersFunction).toBeDefined();
     expect(ordersFunction?.function.parameters.properties).toHaveProperty(
-      "customerid"
+      "customerid",
     );
     expect(
-      ordersFunction?.getModelFunction().parameters.properties
+      ordersFunction?.getModelFunction().parameters.properties,
     ).not.toHaveProperty("customerid");
 
     snapshotFunctions(functions, "nutshop");
@@ -55,7 +55,7 @@ describe("GraphQLSchemaConverter Tests", () => {
 
   test("testCreditCard", () => {
     const functions = getFunctionsFromPath(
-      "graphql/creditcard-rewards.graphqls"
+      "graphql/creditcard-rewards.graphqls",
     );
     expect(functions).toHaveLength(6);
     snapshotFunctions(functions, "creditcard-rewards");
@@ -69,13 +69,13 @@ describe("GraphQLSchemaConverter Tests", () => {
 
   test("testSensors", () => {
     const converter = getConverter(
-      TestUtil.getAssetFileAsString("graphql/sensors.graphqls")
+      TestUtil.getAssetFileAsString("graphql/sensors.graphqls"),
     );
     const functions = converter.convertSchema();
     expect(functions).toHaveLength(5);
 
     const queries = converter.convertOperations(
-      TestUtil.getAssetFileAsString("graphql/sensors-aboveTemp.graphql")
+      TestUtil.getAssetFileAsString("graphql/sensors-aboveTemp.graphql"),
     );
     expect(queries).toHaveLength(2);
     expect(queries[0].function.name).toBe("HighTemps");

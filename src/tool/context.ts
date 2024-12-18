@@ -32,8 +32,8 @@ export interface Context<T extends {}> {
     callbackFn: (
       value: ValueOf<T>,
       key: keyof T,
-      map: Map<keyof T, ValueOf<T>>
-    ) => void
+      map: Map<keyof T, ValueOf<T>>,
+    ) => void,
   ): void;
 
   /**
@@ -50,7 +50,7 @@ export class DefaultContext<T extends {}> implements Context<T> {
 
   constructor(secureData: Record<string, any> = {}) {
     this.secureData = new Map(
-      Object.entries(secureData) as [keyof T, ValueOf<T>][]
+      Object.entries(secureData) as [keyof T, ValueOf<T>][],
     );
   }
 
@@ -66,8 +66,8 @@ export class DefaultContext<T extends {}> implements Context<T> {
     callbackFn: (
       value: ValueOf<T>,
       key: keyof T,
-      map: Map<keyof T, ValueOf<T>>
-    ) => void
+      map: Map<keyof T, ValueOf<T>>,
+    ) => void,
   ): void {
     this.secureData.forEach(callbackFn);
   }

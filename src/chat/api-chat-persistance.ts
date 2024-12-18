@@ -9,7 +9,7 @@ export class APIChatPersistence implements ChatPersistence {
     private apiExecutor: APIQueryExecutor,
     private saveMessage: APIQuery,
     private getMessages: APIQuery,
-    private getMessageContextKeys: Set<string>
+    private getMessageContextKeys: Set<string>,
   ) {}
 
   /**
@@ -20,13 +20,13 @@ export class APIChatPersistence implements ChatPersistence {
    */
   async saveChatMessage<T extends {}>(
     message: T,
-    context: Context<T>
+    context: Context<T>,
   ): Promise<string> {
     // Inline context variables
     context.forEach((value, key) => {
       if (key in message) {
         console.warn(
-          `Context variable overlaps with message field and is ignored: ${String(key)}`
+          `Context variable overlaps with message field and is ignored: ${String(key)}`,
         );
       } else {
         message[key] = value;
@@ -45,19 +45,19 @@ export class APIChatPersistence implements ChatPersistence {
    */
   async getChatMessages<TChatMessage, T extends {}>(
     context: Context<T>,
-    limit: number
+    limit: number,
   ): Promise<TChatMessage[]> {
     const argumentsNode = { limit };
     const variables = FunctionUtil.addOrOverrideContext(
       argumentsNode,
       this.getMessageContextKeys,
-      context
+      context,
     );
 
     try {
       const response = await this.apiExecutor.executeQuery(
         this.getMessages,
-        variables
+        variables,
       );
       const root = JSON.parse(response);
       const messages: TChatMessage[] = root?.data ?? [];

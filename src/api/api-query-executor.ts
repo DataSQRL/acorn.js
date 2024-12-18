@@ -12,7 +12,7 @@ export interface APIQueryExecutor {
    */
   validate(
     functionDef: FunctionDefinition,
-    args?: Record<string, unknown>
+    args?: Record<string, unknown>,
   ): ValidationResult;
   validate(apiQuery: APIQuery): ValidationResult;
 
@@ -27,6 +27,6 @@ export interface APIQueryExecutor {
    */
   executeQuery(
     query: APIQuery,
-    args?: Record<string, unknown>
+    args?: Record<string, unknown>,
   ): Promise<string>;
 }

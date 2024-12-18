@@ -4,16 +4,16 @@ export class GraphQLSchemaConverterConfig<TOperation = string> {
   constructor(
     public operationFilter: (
       operation: TOperation,
-      name: string
+      name: string,
     ) => boolean = () => true,
-    public maxDepth: number = 3
+    public maxDepth: number = 3,
   ) {}
 
   static ignorePrefix<TOperation = string>(...prefixes: string[]) {
     const prefixesLower = prefixes.map((prefix) => prefix.trim().toLowerCase());
     return (_operation: TOperation, name: string) =>
       !prefixesLower.some((prefixLower) =>
-        name.trim().toLowerCase().startsWith(prefixLower)
+        name.trim().toLowerCase().startsWith(prefixLower),
       );
   }
 }

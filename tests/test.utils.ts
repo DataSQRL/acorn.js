@@ -24,7 +24,7 @@ export class TestUtil {
       const expected = fs.readFileSync(assetPath, "utf-8");
       if (expected !== result) {
         throw new Error(
-          `Expected and result do not match. Expected: ${expected}, Result: ${result}`
+          `Expected and result do not match. Expected: ${expected}, Result: ${result}`,
         );
       }
     } else {

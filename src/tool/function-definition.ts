@@ -33,7 +33,7 @@ export class FunctionDefinition {
     public parameters: FunctionDefinitionParameters = {
       ...FunctionDefinition.DEFAULT_PARAMETERS,
       ...parameters,
-    }
+    },
   ) {}
 }
 
