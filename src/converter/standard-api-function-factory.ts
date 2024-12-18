@@ -10,7 +10,7 @@ import { APIFunctionFactory } from "./api-function-factory";
 export class StandardAPIFunctionFactory implements APIFunctionFactory {
   constructor(
     private apiExecutor: APIQueryExecutor,
-    private contextKeys: Set<string>,
+    private contextKeys: Set<string> = new Set()
   ) {}
 
   /**
@@ -24,7 +24,7 @@ export class StandardAPIFunctionFactory implements APIFunctionFactory {
       functionDef,
       this.contextKeys,
       query,
-      this.apiExecutor,
+      this.apiExecutor
     );
   }
 }

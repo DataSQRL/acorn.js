@@ -1,5 +1,5 @@
 {
-  "name": "@datasqrl/acorn-typescript",
+  "name": "@datasqrl/acorn-node",
   "version": "1.0.0",
   "scripts": {
     "test": "jest",

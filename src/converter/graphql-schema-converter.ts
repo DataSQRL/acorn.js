@@ -34,20 +34,10 @@ import {
 import { GraphQLQuery } from "../api/graphql-api-query";
 import { Maybe } from "graphql/jsutils/Maybe";
 
-// interface GraphQLSchemaConverterConfig {
-//   operationFilter: (operation: string, fieldName: string) => boolean;
-//   maxDepth: number;
-// }
-
 export interface UnwrappedType {
   type: GraphQLInputType;
   required: boolean;
 }
-
-const DEFAULT_CONFIG: GraphQLSchemaConverterConfig = {
-  operationFilter: () => true,
-  maxDepth: 5,
-};
 
 const combineStrings = (prefix: string, suffix: string) => {
   return `${prefix}${prefix ? "_" : ""}${suffix}`;
@@ -58,19 +48,19 @@ export class VisitContext {
     public operationName: string,
     public prefix: string,
     public numArgs: number,
-    public path: GraphQLObjectType[],
+    public path: GraphQLObjectType[]
   ) {}
 
   public nested(
     fieldName: string,
     type: GraphQLObjectType,
-    additionalArgs: number,
+    additionalArgs: number
   ) {
     return new VisitContext(
       this.operationName + "." + fieldName,
       combineStrings(this.prefix, fieldName),
       this.numArgs + additionalArgs,
-      [...this.path, type],
+      [...this.path, type]
     );
   }
 }
@@ -88,7 +78,7 @@ export class GraphQLSchemaConverter {
   constructor(
     schemaString: string,
     private functionFactory: APIFunctionFactory,
-    private config: GraphQLSchemaConverterConfig = DEFAULT_CONFIG,
+    private config: GraphQLSchemaConverterConfig = GraphQLSchemaConverterConfig.DEFAULT
   ) {
     this.schema = buildSchema(schemaString);
   }
@@ -97,7 +87,7 @@ export class GraphQLSchemaConverter {
     startLine: number,
     startColumn: number,
     endLine: number,
-    endColumn: number,
+    endColumn: number
   ): string {
     const lines = text.split("\n");
     let result = "";
@@ -111,7 +101,7 @@ export class GraphQLSchemaConverter {
       if (i === startLine - 1 && i === endLine - 1) {
         subLine = line.substring(
           startColumn - 1,
-          Math.min(endColumn - 1, line.length),
+          Math.min(endColumn - 1, line.length)
         );
         // this is first line
       } else if (i === startLine - 1) {
@@ -144,7 +134,7 @@ export class GraphQLSchemaConverter {
     document.definitions.forEach((definition) => {
       if (definition.kind !== Kind.OPERATION_DEFINITION) {
         throw new Error(
-          `Expected definition to be an operation, but got: ${definition.kind}`,
+          `Expected definition to be an operation, but got: ${definition.kind}`
         );
       }
 
@@ -159,7 +149,7 @@ export class GraphQLSchemaConverter {
         startLocation?.line || 1,
         startLocation?.column || 0,
         endLocation?.line || 1,
-        endLocation?.column || 0,
+        endLocation?.column || 0
       );
       const query = new GraphQLQuery(queryString);
       functions.push(this.functionFactory.create(funcDef, query));
@@ -169,7 +159,7 @@ export class GraphQLSchemaConverter {
   }
 
   private convertOperationDefinition(
-    node: OperationDefinitionNode,
+    node: OperationDefinitionNode
   ): FunctionDefinition {
     const op = node.operation;
     if (op !== OperationTypeNode.QUERY && op !== OperationTypeNode.MUTATION) {
@@ -270,11 +260,11 @@ export class GraphQLSchemaConverter {
 
   private convertToApiFunction(
     operationType: "query" | "mutation",
-    field: GraphQLField<any, any>,
+    field: GraphQLField<any, any>
   ): APIFunction {
     const functionDef = GraphQLSchemaConverter.initializeFunctionDefinition(
       field.name,
-      field.description,
+      field.description
     );
     const params = functionDef.parameters;
     const operationName = `${operationType.toLowerCase()}.${field.name}`;
@@ -285,7 +275,7 @@ export class GraphQLSchemaConverter {
       "",
       queryHeader,
       params,
-      new VisitContext(operationName, "", 0, []),
+      new VisitContext(operationName, "", 0, [])
     );
 
     const query = `${queryHeader}${queryParams}) {\n${queryBody}}\n`;
@@ -293,7 +283,7 @@ export class GraphQLSchemaConverter {
   }
 
   private convertToArgument(
-    type: GraphQLInputType,
+    type: GraphQLInputType
   ): FunctionDefinitionArgument {
     if (type instanceof GraphQLScalarType) {
       return {
@@ -341,7 +331,7 @@ export class GraphQLSchemaConverter {
 
   private static initializeFunctionDefinition(
     name: string,
-    description: Maybe<string>,
+    description: Maybe<string>
   ): FunctionDefinition {
     const funcDef = new FunctionDefinition(name, description, {
       type: "object",
@@ -371,7 +361,7 @@ export class GraphQLSchemaConverter {
     queryBodyIn: string,
     queryHeader: string,
     params: FunctionDefinitionParameters,
-    context: VisitContext,
+    context: VisitContext
   ) {
     let queryParams = "";
     let queryBody = "";
@@ -381,12 +371,12 @@ export class GraphQLSchemaConverter {
       // Don't recurse in a cycle or if depth limit is exceeded
       if (context.path.includes(type)) {
         console.info(
-          `Detected cycle on operation '${context.operationName}'. Aborting traversal.`,
+          `Detected cycle on operation '${context.operationName}'. Aborting traversal.`
         );
         return { success: false, queryParams, queryBody };
       } else if (context.path.length + 1 > this.config.maxDepth) {
         console.info(
-          `Aborting traversal because depth limit exceeded on operation '${context.operationName}'`,
+          `Aborting traversal because depth limit exceeded on operation '${context.operationName}'`
         );
         return { success: false, queryParams, queryBody };
       }
@@ -417,7 +407,7 @@ export class GraphQLSchemaConverter {
               unwrappedType,
               combineStrings(context.prefix, nestedField.name),
               nestedField.name,
-              nestedField.description,
+              nestedField.description
             );
             queryHeader += precessedData.queryHeader;
             queryBody += precessedData.queryBody;
@@ -438,7 +428,7 @@ export class GraphQLSchemaConverter {
             unwrappedType,
             combineStrings(context.prefix, arg.name),
             arg.name,
-            arg.description,
+            arg.description
           );
           queryHeader += precessedData.queryHeader;
           queryBody += precessedData.queryBody;
@@ -468,7 +458,7 @@ export class GraphQLSchemaConverter {
           queryBody,
           queryHeader,
           params,
-          context.nested(nestedField.name, objectType, numArgs),
+          context.nested(nestedField.name, objectType, numArgs)
         );
         queryParams += queryParamsNested;
         queryBody += queryBodyNested;
@@ -477,7 +467,7 @@ export class GraphQLSchemaConverter {
 
       if (!atLeastOneField) {
         throw new Error(
-          `Expected at least one field on path: ${context.operationName}`,
+          `Expected at least one field on path: ${context.operationName}`
         );
       }
 
@@ -501,7 +491,7 @@ export class GraphQLSchemaConverter {
     unwrappedType: UnwrappedType,
     argName: string,
     originalName: string,
-    description: Maybe<string>,
+    description: Maybe<string>
   ) {
     const argDef = this.convertToArgument(unwrappedType.type);
     argDef.description = description;
