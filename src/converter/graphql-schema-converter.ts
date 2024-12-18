@@ -24,7 +24,7 @@ import {
   GraphQLString,
 } from "graphql";
 import { GraphQLSchemaConverterConfig } from "./graphql-schema-converter-config";
-import { APIFunctionFactory } from "../converter/api-function-factory";
+import { APIFunctionFactory } from "./api-function-factory";
 import { APIFunction } from "../tool/api-function";
 import {
   FunctionDefinition,
@@ -195,10 +195,9 @@ export class GraphQLSchemaConverter {
       let type = varDef.type;
       const required = type.kind === Kind.NON_NULL_TYPE;
 
-      // TODO: figure out why it was there
-      // if (required) {
-      //   type = type.type;
-      // }
+      if (type.kind === Kind.NON_NULL_TYPE) {
+        type = type.type;
+      }
 
       const argumentDef = this.convertType(type);
       argumentDef.description = description;

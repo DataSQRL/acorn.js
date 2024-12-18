@@ -17,22 +17,16 @@ export class APIFunction {
     `but this has failed with the following error: ${errorMessage}. ` +
     "Please retry to call the function again. Send ONLY the JSON as a response.";
 
-  private readonly function: FunctionDefinition;
-  private readonly contextKeys: Set<string>;
-  private readonly apiQuery: APIQuery;
-  private readonly apiExecutor: APIQueryExecutor;
+  readonly function: FunctionDefinition;
 
   constructor(
     func: FunctionDefinition,
-    contextKeys: Set<string>,
-    apiQuery: APIQuery,
-    apiExecutor: APIQueryExecutor
+    public readonly contextKeys: Set<string>,
+    public readonly apiQuery: APIQuery,
+    public readonly apiExecutor: APIQueryExecutor
   ) {
+    // function is reserved word and cannot be used inc constructor
     this.function = func;
-    this.contextKeys = contextKeys;
-    this.apiQuery = apiQuery;
-    this.apiExecutor = apiExecutor;
-
     const validationResult = apiExecutor.validate(apiQuery);
     if (!validationResult.isValid) {
       throw new Error(

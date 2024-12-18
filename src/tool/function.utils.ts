@@ -3,17 +3,6 @@ import type { APIFunction } from "./api-function"; // Placeholder for the APIFun
 
 export class FunctionUtil {
   /**
-   * Converts a list of APIFunction objects to a JSON string.
-   *
-   * @param tools - List of APIFunction objects
-   * @returns - Pretty-printed JSON string
-   * @throws - Error if serialization fails
-   */
-  static async toJsonString(tools: APIFunction[]): Promise<string> {
-    return JSON.stringify(tools, null, 2);
-  }
-
-  /**
    * Adds or overrides context in a JSON node.
    *
    * @param argumentsNode - Original JSON node

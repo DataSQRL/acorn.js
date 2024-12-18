@@ -14,7 +14,7 @@ export interface APIQueryExecutor {
     functionDef: FunctionDefinition,
     args?: Record<string, unknown>
   ): ValidationResult;
-  validate(functionDef: APIQuery): ValidationResult;
+  validate(apiQuery: APIQuery): ValidationResult;
 
   /**
    * Executes the given query with the provided arguments against the API and returns the result as
