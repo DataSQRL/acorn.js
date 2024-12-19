@@ -1,3 +1,4 @@
+import { expect } from "@jest/globals";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -5,7 +6,6 @@ export class TestUtil {
   static assetsFolderPath = path.join(__dirname, "assets");
 
   static getAssetFile(filePath: string) {
-    console.log({ __dirname });
     const assetPath = path.join(TestUtil.assetsFolderPath, filePath);
     if (!assetPath) {
       throw new Error(`Invalid url: ${assetPath}`);
@@ -22,11 +22,7 @@ export class TestUtil {
     const assetPath = path.join(TestUtil.assetsFolderPath, relativePath);
     if (fs.existsSync(assetPath)) {
       const expected = fs.readFileSync(assetPath, "utf-8");
-      if (expected !== result) {
-        throw new Error(
-          `Expected and result do not match. Expected: ${expected}, Result: ${result}`,
-        );
-      }
+      expect(JSON.parse(result)).toEqual(JSON.parse(expected));
     } else {
       fs.writeFileSync(assetPath, result, "utf-8");
       throw new Error(`Created snapshot: ${path.resolve(assetPath)}`);

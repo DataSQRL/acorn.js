@@ -14,20 +14,20 @@ export class MockAPIExecutor implements APIQueryExecutor {
 
   validate(
     functionDef: FunctionDefinition,
-    args?: Record<string, unknown>,
+    args?: Record<string, unknown>
   ): ValidationResult;
   validate(apiQuery: APIQuery): ValidationResult;
   validate(
     _functionDef: FunctionDefinition | APIQuery,
-    _args?: Record<string, unknown>,
+    _args?: Record<string, unknown>
   ): ValidationResult {
     return ValidationResult.VALID;
   }
 
   executeQuery(
     query: APIQuery,
-    _arguments?: Record<string, unknown>,
+    _arguments?: Record<string, unknown>
   ): Promise<string> {
-    return Promise.resolve(this.queryToResult(query.queryString));
+    return Promise.resolve(this.queryToResult(query.query));
   }
 }

@@ -1,3 +1,3 @@
 export interface APIQuery {
-  queryString: string;
+  query: string;
 }

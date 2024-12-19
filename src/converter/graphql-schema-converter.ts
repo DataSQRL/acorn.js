@@ -5,6 +5,7 @@ import {
   parse,
   TypeNode,
   VariableDefinitionNode,
+  Location,
 } from "graphql/language";
 import {
   GraphQLSchema,
@@ -65,15 +66,8 @@ export class VisitContext {
   }
 }
 
-// class APIQuery {
-//   constructor(public queryString: string) {}
-// }
-
 export class GraphQLSchemaConverter {
   private schema: GraphQLSchema;
-
-  // private schemaPrinter = // printSchema()
-  // new SchemaPrinter(SchemaPrinter.Options.defaultOptions().descriptionsAsHashComments(true));
 
   constructor(
     schemaString: string,
@@ -82,46 +76,19 @@ export class GraphQLSchemaConverter {
   ) {
     this.schema = buildSchema(schemaString);
   }
-  private static extractOperation(
-    text: string,
-    startLine: number,
-    startColumn: number,
-    endLine: number,
-    endColumn: number
-  ): string {
-    const lines = text.split("\n");
-    let result = "";
-    endLine = Math.min(endLine, lines.length);
+  private static extractOperation(text: string, location?: Location): string {
+    const queryString = text.substring(
+      location?.start || 0,
+      location?.end || text.length
+    );
 
-    for (let i = startLine - 1; i <= endLine - 1; i++) {
-      const line = lines[i];
-      let subLine: string;
+    // remove comments
+    const lines = queryString.split("\n").map((line) => {
+      const commentPosition = line.indexOf("#");
+      return commentPosition === -1 ? line : line.substring(0, commentPosition);
+    });
 
-      // there is 1 line
-      if (i === startLine - 1 && i === endLine - 1) {
-        subLine = line.substring(
-          startColumn - 1,
-          Math.min(endColumn - 1, line.length)
-        );
-        // this is first line
-      } else if (i === startLine - 1) {
-        subLine = line.substring(startColumn - 1);
-        // this is last line
-      } else if (i === endLine - 1) {
-        subLine = line.substring(0, Math.min(endColumn - 1, line.length));
-      } else {
-        subLine = line;
-      }
-
-      const index = subLine.indexOf("#");
-      subLine = index !== -1 ? subLine.substring(0, index) : subLine;
-
-      if (subLine.trim() !== "") {
-        result += subLine + "\n";
-      }
-    }
-
-    return result;
+    return lines.join("\n");
   }
 
   public convertOperations(operationDefinition: string): APIFunction[] {
@@ -139,17 +106,9 @@ export class GraphQLSchemaConverter {
       }
 
       const funcDef = this.convertOperationDefinition(definition);
-      // TODO: check if this is correct
-      // and try using start and end positions from definition.selectionSet.loc
-      definition.selectionSet.loc?.end;
-      const startLocation = definition.selectionSet.loc?.startToken;
-      const endLocation = definition.selectionSet.loc?.endToken;
       const queryString = GraphQLSchemaConverter.extractOperation(
         operationDefinition,
-        startLocation?.line || 1,
-        startLocation?.column || 0,
-        endLocation?.line || 1,
-        endLocation?.column || 0
+        definition.loc
       );
       const query = new GraphQLQuery(queryString);
       functions.push(this.functionFactory.create(funcDef, query));
@@ -268,17 +227,15 @@ export class GraphQLSchemaConverter {
     );
     const params = functionDef.parameters;
     const operationName = `${operationType.toLowerCase()}.${field.name}`;
-    const queryHeader = `${operationType.toLowerCase()} ${field.name} (`;
+    const queryHeader = `${operationType.toLowerCase()} ${field.name}(`;
 
     const { queryParams, queryBody } = this.visit(
       field,
-      "",
-      queryHeader,
       params,
       new VisitContext(operationName, "", 0, [])
     );
 
-    const query = `${queryHeader}${queryParams}) {\n${queryBody}}\n`;
+    const query = `${queryHeader}${queryParams}) {\n${queryBody}\n}`;
     return this.functionFactory.create(functionDef, new GraphQLQuery(query));
   }
 
@@ -303,30 +260,6 @@ export class GraphQLSchemaConverter {
       };
     }
     throw new Error(`Unsupported type: ${type}`);
-    // TODO check if everything work with calls that expect `Type` argument instead of `GraphQLInputType`
-    // if (type instanceof GraphQLNonNull) {
-    //   return this.convertToArgument(type.ofType);
-    // }
-    // if (type instanceof GraphQLList) {
-    //   return {
-    //     type: 'array',
-    //     items: this.convertToArgument(type.ofType)
-    //   }
-    // }
-
-    // const typeName = type.name;
-    // const graphQLType = this.schema.getType(typeName);
-
-    // if (graphQLType instanceof GraphQLInputObjectType) {
-    //   return this.convertToArgument(graphQLType);
-    // } else {
-    //   throw new Error(
-    //     `Unexpected type [${typeName}] with class: ${graphQLType}`
-    //   );
-    // }
-    // return {
-    //   type: 'enum'
-    // }
   }
 
   private static initializeFunctionDefinition(
@@ -358,8 +291,6 @@ export class GraphQLSchemaConverter {
 
   public visit(
     field: GraphQLField<any, any>,
-    queryBodyIn: string,
-    queryHeader: string,
     params: FunctionDefinitionParameters,
     context: VisitContext
   ) {
@@ -399,8 +330,6 @@ export class GraphQLSchemaConverter {
             unwrappedType = this.convertRequired(nestedField.type);
 
             const precessedData = this.processField(
-              queryBody,
-              queryHeader,
               params,
               context,
               numArgs,
@@ -409,19 +338,17 @@ export class GraphQLSchemaConverter {
               nestedField.name,
               nestedField.description
             );
-            queryHeader += precessedData.queryHeader;
+            queryParams += precessedData.queryHeader;
             queryBody += precessedData.queryBody;
 
             const typeString = this.printFieldType(nestedField);
-            queryHeader += `${precessedData.argName}: ${typeString}`;
+            queryParams += `${precessedData.argName}: ${typeString}`;
             numArgs++;
           }
 
           queryBody += " }";
         } else {
           const precessedData = this.processField(
-            queryBody,
-            queryHeader,
             params,
             context,
             numArgs,
@@ -430,11 +357,11 @@ export class GraphQLSchemaConverter {
             arg.name,
             arg.description
           );
-          queryHeader += precessedData.queryHeader;
+          queryParams += precessedData.queryHeader;
           queryBody += precessedData.queryBody;
 
           const typeString = this.printArgumentType(arg);
-          queryHeader += `${precessedData.argName}: ${typeString}`;
+          queryParams += `${precessedData.argName}: ${typeString}`;
           numArgs++;
         }
       }
@@ -455,8 +382,6 @@ export class GraphQLSchemaConverter {
           queryBody: queryBodyNested,
         } = this.visit(
           nestedField,
-          queryBody,
-          queryHeader,
           params,
           context.nested(nestedField.name, objectType, numArgs)
         );
@@ -483,8 +408,6 @@ export class GraphQLSchemaConverter {
   }
 
   private processField(
-    queryBody: string,
-    queryHeader: string,
     params: FunctionDefinitionParameters,
     ctx: VisitContext,
     numArgs: number,
@@ -493,6 +416,8 @@ export class GraphQLSchemaConverter {
     originalName: string,
     description: Maybe<string>
   ) {
+    let queryBody = "";
+    let queryHeader = "";
     const argDef = this.convertToArgument(unwrappedType.type);
     argDef.description = description;
 
@@ -527,7 +452,6 @@ export class GraphQLSchemaConverter {
         [field.name]: field,
       },
     });
-    // field.type.toJSON();
     const output = printType(type);
     // TODO: do it in a more elegant way
     return this.extractTypeFromDummy(output, field.name);
