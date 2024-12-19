@@ -70,7 +70,7 @@ export class GraphQLSchemaConverter {
   private schema: GraphQLSchema;
 
   constructor(
-    schemaString: string,
+    private schemaString: string,
     private functionFactory: APIFunctionFactory,
     private config: GraphQLSchemaConverterConfig = GraphQLSchemaConverterConfig.DEFAULT
   ) {
@@ -83,29 +83,40 @@ export class GraphQLSchemaConverter {
     );
 
     // remove comments
-    const lines = queryString.split("\n").map((line) => {
-      const commentPosition = line.indexOf("#");
-      return commentPosition === -1 ? line : line.substring(0, commentPosition);
-    });
+    const lines = queryString
+      .split("\n")
+      .map((line) => {
+        const commentPosition = line.indexOf("#");
+        return commentPosition === -1
+          ? line
+          : line.substring(0, commentPosition).trim();
+      })
+      .filter(Boolean);
 
     return lines.join("\n");
   }
 
+  // TODO: move to a separate OperationConverter class
   public convertOperations(operationDefinition: string): APIFunction[] {
     const document = parse(operationDefinition);
+
     if (!document.definitions || document.definitions.length === 0) {
       throw new Error("Operation definition contains no definitions");
     }
 
     const functions: APIFunction[] = [];
-    document.definitions.forEach((definition) => {
+    document.definitions.forEach((definition, idx) => {
       if (definition.kind !== Kind.OPERATION_DEFINITION) {
         throw new Error(
           `Expected definition to be an operation, but got: ${definition.kind}`
         );
       }
 
-      const funcDef = this.convertOperationDefinition(definition);
+      const funcDef = this.convertOperationDefinition(
+        definition,
+        operationDefinition,
+        document.definitions[idx - 1]?.loc?.end
+      );
       const queryString = GraphQLSchemaConverter.extractOperation(
         operationDefinition,
         definition.loc
@@ -118,14 +129,20 @@ export class GraphQLSchemaConverter {
   }
 
   private convertOperationDefinition(
-    node: OperationDefinitionNode
+    node: OperationDefinitionNode,
+    operationDefinition: string,
+    prevNodeLocationEnd: number = 0
   ): FunctionDefinition {
     const op = node.operation;
     if (op !== OperationTypeNode.QUERY && op !== OperationTypeNode.MUTATION) {
       throw new Error(`Do not support subscriptions: ${node.name}`);
     }
 
-    const functionComment = ""; // TODO extract comments node.comments; // Placeholder for extracting comments
+    const functionComment = GraphQLSchemaConverter.parseNodeDescription(
+      operationDefinition,
+      node.loc?.start,
+      prevNodeLocationEnd
+    );
     const functionName = node.name?.value || "";
 
     const functionDef: FunctionDefinition = {
@@ -139,7 +156,11 @@ export class GraphQLSchemaConverter {
     };
 
     node.variableDefinitions?.forEach((varDef: VariableDefinitionNode) => {
-      const description = ""; // TODO extract comments varDef.comments // Placeholder for extracting comments
+      const description = GraphQLSchemaConverter.parseNodeDescription(
+        operationDefinition,
+        varDef.loc?.start,
+        node.loc?.start
+      );
       const argumentName = varDef.variable.name.value;
       let type = varDef.type;
       const required = type.kind === Kind.NON_NULL_TYPE;
@@ -223,7 +244,7 @@ export class GraphQLSchemaConverter {
   ): APIFunction {
     const functionDef = GraphQLSchemaConverter.initializeFunctionDefinition(
       field.name,
-      field.description
+      field.description?.trim()
     );
     const params = functionDef.parameters;
     const operationName = `${operationType.toLowerCase()}.${field.name}`;
@@ -283,10 +304,49 @@ export class GraphQLSchemaConverter {
     }
 
     return {
-      // TODO check if this is correctly translated
       type: type.ofType,
       required: true,
     };
+  }
+
+  public static parseNodeDescription(
+    definitionString: string,
+    nodeLocationStart?: number,
+    parentLocationStart?: number
+  ) {
+    if (nodeLocationStart == null || parentLocationStart == null) {
+      return undefined;
+    }
+    const contentToSearchForComments = definitionString
+      .substring(parentLocationStart, nodeLocationStart)
+      .trim();
+
+    const multilineCommentRegex = /"""((?!""")[\s\S])*"""$/g;
+    const singlelineCommentRegex = /#(.*)$/g;
+    const matchers = [
+      {
+        regex: singlelineCommentRegex,
+        // remove # symbol from the start
+        clean: (match: string) => match.substring(1).trim(),
+      },
+      {
+        regex: multilineCommentRegex,
+        // remove """ symbols around the text
+        clean: (match: string) => match.substring(3, match.length - 3).trim(),
+      },
+    ];
+
+    for (const matcher of matchers) {
+      const res = contentToSearchForComments.match(matcher.regex);
+      const match = res?.[0];
+      if (!match) {
+        continue;
+      }
+      return matcher.clean(match) || undefined;
+    }
+
+    // there was no comment
+    return undefined;
   }
 
   public visit(
@@ -336,7 +396,12 @@ export class GraphQLSchemaConverter {
               unwrappedType,
               combineStrings(context.prefix, nestedField.name),
               nestedField.name,
-              nestedField.description
+              nestedField.description?.trim() ??
+                GraphQLSchemaConverter.parseNodeDescription(
+                  this.schemaString,
+                  nestedField.astNode?.loc?.start,
+                  inputType.astNode?.loc?.start
+                )
             );
             queryParams += precessedData.queryHeader;
             queryBody += precessedData.queryBody;
@@ -355,7 +420,12 @@ export class GraphQLSchemaConverter {
             unwrappedType,
             combineStrings(context.prefix, arg.name),
             arg.name,
-            arg.description
+            arg.description?.trim() ??
+              GraphQLSchemaConverter.parseNodeDescription(
+                this.schemaString,
+                arg.astNode?.loc?.start,
+                field.astNode?.loc?.start
+              )
           );
           queryParams += precessedData.queryHeader;
           queryBody += precessedData.queryBody;
@@ -437,7 +507,6 @@ export class GraphQLSchemaConverter {
     argName = "$" + argName;
     queryBody += originalName + ": " + argName;
 
-    // TODO: do we need to return other data?
     return {
       argName,
       queryHeader,

@@ -126,13 +126,13 @@
   {
     "function": {
       "name": "HighTemps",
-      "description": " Returns all readings with a temperature higher than the provided value",
+      "description": "Returns all readings with a temperature higher than the provided value",
       "parameters": {
         "type": "object",
         "properties": {
           "temperature": {
             "type": "number",
-            "description": " The temperature"
+            "description": "The temperature"
           }
         },
         "required": ["temperature"]
@@ -146,13 +146,12 @@
   {
     "function": {
       "name": "HighTemps2",
-      "description": " high temperature readings",
+      "description": "high temperature readings",
       "parameters": {
         "type": "object",
         "properties": {
           "temp": {
-            "type": "number",
-            "description": ""
+            "type": "number"
           }
         },
         "required": ["temp"]
