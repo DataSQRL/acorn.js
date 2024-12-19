@@ -7,7 +7,7 @@ This is the TypeScript implementation of Acorn Agent which provides the librarie
 Install package and dependency
 
 ```
-npm i @datasqrl/acorn-node graphql
+npm i @datasqrl/acorn-node
 ```
 
 You can use both `require` and `import` syntax
@@ -28,7 +28,7 @@ const apiExecutor = new MyApiQueryExecutor();
 
 const converter = new GraphQLSchemaConverter(
   graphQlSchemaString,
-  new StandardAPIFunctionFactory(apiExecutor)
+  new StandardAPIFunctionFactory(apiExecutor),
 );
 
 // your functions are here

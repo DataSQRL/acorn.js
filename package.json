@@ -11,7 +11,7 @@
   "lint-staged": {
     "*.{json,ts,md}": "prettier --write --ignore-unknown"
   },
-  "main": "index.js",
+  "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [

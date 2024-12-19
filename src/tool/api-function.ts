@@ -11,7 +11,7 @@ import { ValidationResult } from "./validation-result";
 export class APIFunction {
   public static readonly createInvalidCallMessage = (
     functionName: string,
-    errorMessage?: string
+    errorMessage?: string,
   ) =>
     `It looks like you tried to call function \`${functionName}\`, ` +
     `but this has failed with the following error: ${errorMessage}. ` +
@@ -23,14 +23,14 @@ export class APIFunction {
     func: FunctionDefinition,
     public readonly contextKeys: Set<string>,
     public readonly apiQuery: APIQuery,
-    public readonly apiExecutor: APIQueryExecutor
+    public readonly apiExecutor: APIQueryExecutor,
   ) {
     // function is reserved word and cannot be used inc constructor
     this.function = func;
     const validationResult = apiExecutor.validate(apiQuery);
-    if (!validationResult.isValid) {
+    if (!validationResult.isValid()) {
       throw new Error(
-        `Function [${func.name}] invalid for API [${apiExecutor}]: ${validationResult.errorMessage}`
+        `Function [${func.name}] invalid for API [${apiExecutor}]: ${validationResult.errorMessage}`,
       );
     }
   }
@@ -47,7 +47,7 @@ export class APIFunction {
       required: this.function.parameters.required?.filter?.(fieldFilter),
       properties: APIFunction.filterObjectKeys(
         fieldFilter,
-        this.function.parameters.properties
+        this.function.parameters.properties,
       ),
     };
 
@@ -64,12 +64,12 @@ export class APIFunction {
 
   async execute<T extends {}>(
     argumentsNode: Record<string, unknown>,
-    context: Context<T>
+    context: Context<T>,
   ): Promise<string> {
     const variables = FunctionUtil.addOrOverrideContext(
       argumentsNode,
       this.contextKeys,
-      context
+      context,
     );
 
     return this.apiExecutor.executeQuery(this.apiQuery, variables);
@@ -77,7 +77,7 @@ export class APIFunction {
 
   async validateAndExecute<T extends {}>(
     argumentsNode: any,
-    context: Context<T>
+    context: Context<T>,
   ): Promise<string> {
     const validationResult = this.validate(argumentsNode);
 
@@ -86,13 +86,13 @@ export class APIFunction {
     }
     return APIFunction.createInvalidCallMessage(
       this.function.name,
-      validationResult.errorMessage
+      validationResult.errorMessage,
     );
   }
 
   async validateAndExecuteFromString<T extends {}>(
     argsJson: string,
-    context: Context<T>
+    context: Context<T>,
   ): Promise<string> {
     try {
       const parsedArguments = JSON.parse(argsJson);
@@ -100,23 +100,23 @@ export class APIFunction {
     } catch (error) {
       return APIFunction.createInvalidCallMessage(
         this.function.name,
-        `Malformed JSON: ${typeof error === "object" && error && "message" in error ? error.message : error}`
+        `Malformed JSON: ${typeof error === "object" && error && "message" in error ? error.message : error}`,
       );
     }
   }
 
   private static getFieldFilter(
-    fieldList: Set<string>
+    fieldList: Set<string>,
   ): (field: string) => boolean {
     const contextFilter = new Set(
-      [...fieldList].map((field) => field.toLowerCase())
+      [...fieldList].map((field) => field.toLowerCase()),
     );
     return (field: string) => !contextFilter.has(field.toLowerCase());
   }
 
   private static filterObjectKeys<T extends {}>(
     filter: (field: string) => boolean,
-    data: T
+    data: T,
   ) {
     const filteredKeys = Object.keys(data).filter(filter);
     const filteredObject = filteredKeys.reduce<T>((acc, fieldKey) => {
