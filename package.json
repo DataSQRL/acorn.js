@@ -1,6 +1,6 @@
 {
   "name": "@datasqrl/acorn-node",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
