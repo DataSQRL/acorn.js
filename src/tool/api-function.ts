@@ -1,14 +1,13 @@
-import { APIQuery } from "../api/api-query";
-import { APIQueryExecutor } from "../api/api-query-executor";
+import { ApiQuery, APIQueryExecutor } from "../api";
+import { addOrOverrideFromContext } from "../utils";
 import { Context } from "./context";
-import { FunctionUtil } from "./function.utils";
 import {
   FunctionDefinition,
   FunctionDefinitionParameters,
 } from "./function-definition";
 import { ValidationResult } from "./validation-result";
 
-export class APIFunction {
+export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
   public static readonly createInvalidCallMessage = (
     functionName: string,
     errorMessage?: string,
@@ -22,8 +21,8 @@ export class APIFunction {
   constructor(
     func: FunctionDefinition,
     public readonly contextKeys: Set<string>,
-    public readonly apiQuery: APIQuery,
-    public readonly apiExecutor: APIQueryExecutor,
+    public readonly apiQuery: TApiQuery,
+    public readonly apiExecutor: APIQueryExecutor<TApiQuery>,
   ) {
     // function is reserved word and cannot be used inc constructor
     this.function = func;
@@ -66,7 +65,7 @@ export class APIFunction {
     argumentsNode: Record<string, unknown>,
     context: Context<T>,
   ): Promise<string> {
-    const variables = FunctionUtil.addOrOverrideContext(
+    const variables = addOrOverrideFromContext(
       argumentsNode,
       this.contextKeys,
       context,

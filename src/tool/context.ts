@@ -1,4 +1,4 @@
-import { ValueOf } from "./value-of";
+import { ValueOf } from "../utils/value-of";
 
 /**
  * The {@link Context} class captures the context of an agent interaction. It has a request id that

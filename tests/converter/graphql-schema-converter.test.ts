@@ -1,57 +1,69 @@
 import { describe, test, expect } from "@jest/globals";
 
-import { StandardAPIFunctionFactory } from "../../src/converter/standard-api-function-factory";
+import {
+  StandardAPIFunctionFactory,
+  GraphQLSchemaConverter,
+  graphQlSchemaConverterConfig,
+  GraphQlOperationConverter,
+} from "../../src/converter";
 import { MockAPIExecutor } from "../mocks/mock-api-executor";
-import { GraphQLSchemaConverter } from "../../src/converter/graphql-schema-converter";
 import { TestUtil } from "../test.utils";
-import { APIFunction } from "../../src/tool/api-function";
-import { GraphQLSchemaConverterConfig } from "../../src/converter/graphql-schema-converter-config";
+import { APIFunction } from "../../src/tool";
+import { ApiQuery } from "../../src/api";
 
 const apiExecutor = MockAPIExecutor.create("none");
 const functionFactory = new StandardAPIFunctionFactory(apiExecutor, new Set());
+const operationConverter = new GraphQlOperationConverter(functionFactory);
 
-function getConverter(schemaString: string): GraphQLSchemaConverter {
-  return new GraphQLSchemaConverter(schemaString, functionFactory);
+function getConverter(): GraphQLSchemaConverter {
+  return new GraphQLSchemaConverter(functionFactory);
 }
 
-function getFunctionsFromPath(path: string): APIFunction[] {
+function getFunctionsFromPath(path: string) {
   const schemaString = TestUtil.getAssetFileAsString(path);
-  return getConverter(schemaString).convertSchema();
+  return getConverter().convertSchema(schemaString);
 }
 
-function snapshotFunctions(functions: APIFunction[], testName: string): void {
+function snapshotFunctions(
+  functions: APIFunction<ApiQuery>[],
+  testName: string,
+): void {
   TestUtil.snapshotTestOrCreate(
     JSON.stringify(
       functions.map((f) => f.toJSON()),
       null,
-      2
+      2,
     ),
-    `snapshot/${testName}.json`
+    `snapshot/${testName}.json`,
   );
 }
 
 describe("GraphQLSchemaConverter Tests", () => {
   test("testNutshop", () => {
     const converter = new GraphQLSchemaConverter(
-      TestUtil.getAssetFileAsString("graphql/nutshop-schema.graphqls"),
       new StandardAPIFunctionFactory(apiExecutor, new Set(["customerid"])),
-      new GraphQLSchemaConverterConfig(
-        GraphQLSchemaConverterConfig.ignorePrefix("internal")
-      )
+      graphQlSchemaConverterConfig.create(
+        graphQlSchemaConverterConfig.createIgnorePrefixOperationFilter(
+          "internal",
+        ),
+      ),
+    );
+    const schemaString = TestUtil.getAssetFileAsString(
+      "graphql/nutshop-schema.graphqls",
     );
 
-    const functions = converter.convertSchema();
+    const functions = converter.convertSchema(schemaString);
     expect(functions).toHaveLength(5);
 
     const ordersFunction = functions.find(
-      (f) => f.getName().toLowerCase() === "orders"
+      (f) => f.getName().toLowerCase() === "orders",
     );
     expect(ordersFunction).toBeDefined();
     expect(ordersFunction?.function.parameters.properties).toHaveProperty(
-      "customerid"
+      "customerid",
     );
     expect(
-      ordersFunction?.getModelFunction().parameters.properties
+      ordersFunction?.getModelFunction().parameters.properties,
     ).not.toHaveProperty("customerid");
 
     snapshotFunctions(functions, "nutshop");
@@ -59,7 +71,7 @@ describe("GraphQLSchemaConverter Tests", () => {
 
   test("testCreditCard", () => {
     const functions = getFunctionsFromPath(
-      "graphql/creditcard-rewards.graphqls"
+      "graphql/creditcard-rewards.graphqls",
     );
     expect(functions).toHaveLength(6);
     snapshotFunctions(functions, "creditcard-rewards");
@@ -72,19 +84,19 @@ describe("GraphQLSchemaConverter Tests", () => {
   });
 
   test("testSensors", () => {
-    const converter = getConverter(
-      TestUtil.getAssetFileAsString("graphql/sensors.graphqls")
+    const converter = getConverter();
+    const schemaString = TestUtil.getAssetFileAsString(
+      "graphql/sensors.graphqls",
     );
-    const functions = converter.convertSchema();
+    const functions = converter.convertSchema(schemaString);
     expect(functions).toHaveLength(5);
 
-    const queries = converter.convertOperations(
-      TestUtil.getAssetFileAsString("graphql/sensors-aboveTemp.graphql")
+    const queries = operationConverter.convertOperations(
+      TestUtil.getAssetFileAsString("graphql/sensors-aboveTemp.graphql"),
     );
     expect(queries).toHaveLength(2);
     expect(queries[0].function.name).toBe("HighTemps");
 
-    functions.push(...queries);
-    snapshotFunctions(functions, "sensors");
+    snapshotFunctions([...functions, ...queries], "sensors");
   });
 });

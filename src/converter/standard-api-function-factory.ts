@@ -1,16 +1,16 @@
-import { APIQuery } from "../api/api-query";
-import { APIQueryExecutor } from "../api/api-query-executor";
-import { APIFunction } from "../tool/api-function";
-import { FunctionDefinition } from "../tool/function-definition";
+import { ApiQuery, APIQueryExecutor, VoidApiQueryExecutor } from "../api";
+import { APIFunction, FunctionDefinition } from "../tool";
 import { APIFunctionFactory } from "./api-function-factory";
 
 /**
  * Standard implementation of APIFunctionFactory.
  */
-export class StandardAPIFunctionFactory implements APIFunctionFactory {
+export class StandardAPIFunctionFactory<TApiQuery extends ApiQuery = ApiQuery>
+  implements APIFunctionFactory<TApiQuery>
+{
   constructor(
-    private apiExecutor: APIQueryExecutor,
-    private contextKeys: Set<string> = new Set()
+    private apiExecutor: APIQueryExecutor<TApiQuery> = new VoidApiQueryExecutor<TApiQuery>(),
+    private contextKeys: Set<string> = new Set(),
   ) {}
 
   /**
@@ -19,12 +19,15 @@ export class StandardAPIFunctionFactory implements APIFunctionFactory {
    * @param query The API query.
    * @returns An APIFunction instance.
    */
-  create(functionDef: FunctionDefinition, query: APIQuery): APIFunction {
-    return new APIFunction(
+  create(
+    functionDef: FunctionDefinition,
+    query: TApiQuery,
+  ): APIFunction<TApiQuery> {
+    return new APIFunction<TApiQuery>(
       functionDef,
       this.contextKeys,
       query,
-      this.apiExecutor
+      this.apiExecutor,
     );
   }
 }

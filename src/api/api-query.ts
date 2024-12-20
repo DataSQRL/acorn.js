@@ -1,3 +1,3 @@
-export interface APIQuery {
+export interface ApiQuery {
   query: string;
 }

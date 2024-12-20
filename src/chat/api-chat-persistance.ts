@@ -1,14 +1,16 @@
-import { APIQuery } from "../api/api-query";
+import { ApiQuery } from "../api/api-query";
 import { APIQueryExecutor } from "../api/api-query-executor";
 import { Context } from "../tool/context";
-import { FunctionUtil } from "../tool/function.utils";
+import { addOrOverrideFromContext } from "../utils/function.utils";
 import { ChatPersistence } from "./chat-persistence";
 
-export class APIChatPersistence implements ChatPersistence {
+export class APIChatPersistence<TApiQuery extends ApiQuery = ApiQuery>
+  implements ChatPersistence
+{
   constructor(
-    private apiExecutor: APIQueryExecutor,
-    private saveMessage: APIQuery,
-    private getMessages: APIQuery,
+    private apiExecutor: APIQueryExecutor<TApiQuery>,
+    private saveMessage: TApiQuery,
+    private getMessages: TApiQuery,
     private getMessageContextKeys: Set<string>,
   ) {}
 
@@ -48,7 +50,7 @@ export class APIChatPersistence implements ChatPersistence {
     limit: number,
   ): Promise<TChatMessage[]> {
     const argumentsNode = { limit };
-    const variables = FunctionUtil.addOrOverrideContext(
+    const variables = addOrOverrideFromContext(
       argumentsNode,
       this.getMessageContextKeys,
       context,
@@ -62,7 +64,7 @@ export class APIChatPersistence implements ChatPersistence {
       const root = JSON.parse(response);
       const messages: TChatMessage[] = root?.data ?? [];
 
-      return messages.reverse(); // Newest should be last
+      return messages.slice().reverse(); // Newest should be last
     } catch (error) {
       console.error("Error retrieving chat messages: ", error);
       throw error;
