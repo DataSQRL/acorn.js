@@ -1,5 +1,5 @@
-import { ValidationResult } from "../tool";
-import { ApiQuery } from "./api-query";
+import { ValidationResult } from "../../tool";
+import { ApiQuery } from "../api-query";
 import { APIQueryExecutor } from "./api-query-executor";
 
 /**

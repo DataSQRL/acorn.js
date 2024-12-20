@@ -1,5 +1,5 @@
 import { ApiQuery } from "../../src/api/api-query";
-import { APIQueryExecutor } from "../../src/api/api-query-executor";
+import { APIQueryExecutor } from "../../src/api/query-executors/api-query-executor";
 import { FunctionDefinition } from "../../src/tool/function-definition";
 import { ValidationResult } from "../../src/tool/validation-result";
 export class MockAPIExecutor implements APIQueryExecutor<ApiQuery> {

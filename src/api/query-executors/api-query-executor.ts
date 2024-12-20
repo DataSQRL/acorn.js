@@ -1,6 +1,6 @@
-import { FunctionDefinition } from "../tool/function-definition";
-import { ValidationResult } from "../tool/validation-result";
-import { ApiQuery } from "./api-query";
+import { FunctionDefinition } from "../../tool/function-definition";
+import { ValidationResult } from "../../tool/validation-result";
+import { ApiQuery } from "../api-query";
 
 export interface APIQueryExecutor<TApiQuery extends ApiQuery = ApiQuery> {
   /**

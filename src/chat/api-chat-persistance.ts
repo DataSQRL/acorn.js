@@ -1,5 +1,5 @@
 import { ApiQuery } from "../api/api-query";
-import { APIQueryExecutor } from "../api/api-query-executor";
+import { APIQueryExecutor } from "../api/query-executors/api-query-executor";
 import { Context } from "../tool/context";
 import { addOrOverrideFromContext } from "../utils/function.utils";
 import { ChatPersistence } from "./chat-persistence";

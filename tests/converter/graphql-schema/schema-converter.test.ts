@@ -5,11 +5,11 @@ import {
   GraphQLSchemaConverter,
   graphQlSchemaConverterConfig,
   GraphQlOperationConverter,
-} from "../../src/converter";
-import { MockAPIExecutor } from "../mocks/mock-api-executor";
-import { TestUtil } from "../test.utils";
-import { APIFunction } from "../../src/tool";
-import { ApiQuery } from "../../src/api";
+} from "../../../src/converter";
+import { MockAPIExecutor } from "../../mocks/mock-api-executor";
+import { TestUtil } from "../../test.utils";
+import { APIFunction } from "../../../src/tool";
+import { ApiQuery, FetchApiQueryExecutor } from "../../../src/api";
 
 const apiExecutor = MockAPIExecutor.create("none");
 const functionFactory = new StandardAPIFunctionFactory(apiExecutor, new Set());
@@ -98,5 +98,27 @@ describe("GraphQLSchemaConverter Tests", () => {
     expect(queries[0].function.name).toBe("HighTemps");
 
     snapshotFunctions([...functions, ...queries], "sensors");
+  });
+
+  test("Rick and Morty", async () => {
+    const expectedCharactersGraphQLQuery =
+      "query characters($page: Int, $name: String, $status: String, $species: String, $type: String, $gender: String) {\ncharacters(page: $page, filter: { name: $name, status: $status, species: $species, type: $type, gender: $gender }) {\ninfo {\ncount\npages\nnext\nprev\n}\nresults {\nid\nname\nstatus\nspecies\ntype\ngender\norigin {\nid\nname\ntype\ndimension\ncreated\n}\nlocation {\nid\nname\ntype\ndimension\ncreated\n}\nimage\nepisode {\nid\nname\nair_date\nepisode\ncreated\n}\ncreated\n}\n}\n\n}";
+
+    const fetchApiExecutor = new FetchApiQueryExecutor(
+      "https://rickandmortyapi.graphcdn.app/",
+    );
+    const converter = new GraphQLSchemaConverter(
+      new StandardAPIFunctionFactory(fetchApiExecutor),
+    );
+    const functions = await converter.convertSchemaFromUri();
+    expect(functions).toHaveLength(9);
+
+    const charactersListFunction = functions.find(
+      (def) => def.function.name === "characters",
+    );
+    expect(charactersListFunction).toBeTruthy();
+    expect(charactersListFunction?.apiQuery.query).toBe(
+      expectedCharactersGraphQLQuery,
+    );
   });
 });

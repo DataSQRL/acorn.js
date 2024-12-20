@@ -9,7 +9,7 @@ export class StandardAPIFunctionFactory<TApiQuery extends ApiQuery = ApiQuery>
   implements APIFunctionFactory<TApiQuery>
 {
   constructor(
-    private apiExecutor: APIQueryExecutor<TApiQuery> = new VoidApiQueryExecutor<TApiQuery>(),
+    public readonly apiExecutor: APIQueryExecutor<TApiQuery> = new VoidApiQueryExecutor<TApiQuery>(),
     private contextKeys: Set<string> = new Set(),
   ) {}
 

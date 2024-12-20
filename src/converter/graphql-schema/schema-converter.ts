@@ -1,11 +1,14 @@
 import {
+  buildClientSchema,
   buildSchema,
+  getIntrospectionQuery,
   GraphQLArgument,
   GraphQLField,
   GraphQLInputField,
   GraphQLInputObjectType,
   GraphQLObjectType,
   GraphQLString,
+  printSchema,
   printType,
 } from "graphql";
 import { ApiQuery } from "../../api";
@@ -25,6 +28,9 @@ import typeConverter, { UnwrapRequiredType } from "./type-converter";
 
 export interface SchemaConverter<TApiQuery extends ApiQuery = ApiQuery> {
   convertSchema(schemaDefinition: string): APIFunction<TApiQuery>[];
+  convertSchemaFromUri(
+    schemaDefinition: string,
+  ): Promise<APIFunction<TApiQuery>[]>;
 }
 
 // TODO: move to schema converter utils
@@ -120,6 +126,16 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     private functionFactory: APIFunctionFactory<TApiQuery>,
     private config: GraphQLSchemaConverterConfig = graphQlSchemaConverterConfig.create(),
   ) {}
+
+  async convertSchemaFromUri() {
+    const introspectionQuery = {
+      query: getIntrospectionQuery(),
+    } as TApiQuery;
+    const res =
+      await this.functionFactory.apiExecutor.executeQuery(introspectionQuery);
+    const schemaDefinition = buildClientSchema(JSON.parse(res));
+    return this.convertSchema(printSchema(schemaDefinition));
+  }
 
   convertSchema(schemaDefinition: string): APIFunction<TApiQuery>[] {
     const schema = buildSchema(schemaDefinition);
@@ -225,14 +241,19 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     if (field.args.length > 0) {
       queryBody += "(";
 
-      for (const arg of field.args) {
+      for (let i = 0; i < field.args.length; i++) {
+        const arg = field.args[i];
         let unwrappedType = typeConverter.unwrapRequiredType(arg.type);
 
         if (unwrappedType.type instanceof GraphQLInputObjectType) {
           const inputType = unwrappedType.type;
-          queryBody += `${arg.name}: { `;
+          const isFirstArg = i === 0;
+          queryBody += `${isFirstArg ? "" : ", "}${arg.name}: { `;
 
-          for (const nestedField of Object.values(inputType.getFields())) {
+          const nestedFields = Object.values(inputType.getFields());
+          for (let j = 0; j < nestedFields.length; j++) {
+            const isFirstNestedField = j === 0;
+            const nestedField = nestedFields[j];
             unwrappedType = typeConverter.unwrapRequiredType(nestedField.type);
 
             const precessedData = processField(
@@ -250,6 +271,12 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
                 ),
             );
             queryParams += precessedData.queryHeader;
+            if (
+              isFirstNestedField &&
+              precessedData.queryBody.startsWith(", ")
+            ) {
+              precessedData.queryBody = precessedData.queryBody.substring(2);
+            }
             queryBody += precessedData.queryBody;
 
             const typeString = printFieldType(nestedField);
