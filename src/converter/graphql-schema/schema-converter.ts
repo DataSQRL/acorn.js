@@ -11,7 +11,7 @@ import {
   printSchema,
   printType,
 } from "graphql";
-import { ApiQuery } from "../../api";
+import { ApiQuery, FetchApiQueryExecutor } from "../../api";
 import { APIFunction, FunctionDefinitionParameters } from "../../tool";
 import { APIFunctionFactory } from "../api-function-factory";
 import graphQlSchemaConverterConfig, {
@@ -25,6 +25,7 @@ import {
 } from "../../utils";
 import { VisitContext } from "./visit-context";
 import typeConverter, { UnwrapRequiredType } from "./type-converter";
+import { StandardAPIFunctionFactory } from "../standard-api-function-factory";
 
 export interface SchemaConverter<TApiQuery extends ApiQuery = ApiQuery> {
   convertSchema(schemaDefinition: string): APIFunction<TApiQuery>[];
@@ -124,6 +125,14 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     private functionFactory: APIFunctionFactory<TApiQuery>,
     private config: GraphQLSchemaConverterConfig = graphQlSchemaConverterConfig.create(),
   ) {}
+
+  static createToolsFromApiUri(uri: string) {
+    const apiExecutor = new FetchApiQueryExecutor(uri);
+    const converter = new GraphQLSchemaConverter(
+      new StandardAPIFunctionFactory(apiExecutor),
+    );
+    return converter.convertSchemaFromApiExecutor();
+  }
 
   async convertSchemaFromApiExecutor() {
     const introspectionQuery = {
