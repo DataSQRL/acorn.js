@@ -1,10 +1,10 @@
 import { DynamicStructuredTool, tool, ToolParams } from "@langchain/core/tools";
-import {
+import type {
   APIFunction,
   FunctionDefinitionArgument,
   FunctionDefinitionParameters,
 } from "../tool";
-import { ApiQuery } from "../api";
+import type { ApiQuery } from "../api";
 import { z, ZodSchema } from "zod";
 
 const zodSchemaProcessors = [
