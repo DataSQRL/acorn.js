@@ -100,7 +100,7 @@ describe("GraphQLSchemaConverter Tests", () => {
     snapshotFunctions([...functions, ...queries], "sensors");
   });
 
-  test("Rick and Morty", async () => {
+  test("fetch Rick and Morty functions", async () => {
     const expectedCharactersGraphQLQuery =
       "query characters($page: Int, $name: String, $status: String, $species: String, $type: String, $gender: String) {\ncharacters(page: $page, filter: { name: $name, status: $status, species: $species, type: $type, gender: $gender }) {\ninfo {\ncount\npages\nnext\nprev\n}\nresults {\nid\nname\nstatus\nspecies\ntype\ngender\norigin {\nid\nname\ntype\ndimension\ncreated\n}\nlocation {\nid\nname\ntype\ndimension\ncreated\n}\nimage\nepisode {\nid\nname\nair_date\nepisode\ncreated\n}\ncreated\n}\n}\n\n}";
 
@@ -110,7 +110,7 @@ describe("GraphQLSchemaConverter Tests", () => {
     const converter = new GraphQLSchemaConverter(
       new StandardAPIFunctionFactory(fetchApiExecutor),
     );
-    const functions = await converter.convertSchemaFromUri();
+    const functions = await converter.convertSchemaFromApiExecutor();
     expect(functions).toHaveLength(9);
 
     const charactersListFunction = functions.find(
@@ -120,5 +120,47 @@ describe("GraphQLSchemaConverter Tests", () => {
     expect(charactersListFunction?.apiQuery.query).toBe(
       expectedCharactersGraphQLQuery,
     );
+  });
+
+  test("execute Rick and Morty query", async () => {
+    const fetchApiExecutor = new FetchApiQueryExecutor(
+      "https://rickandmortyapi.graphcdn.app/",
+    );
+    const converter = new GraphQLSchemaConverter(
+      new StandardAPIFunctionFactory(fetchApiExecutor),
+    );
+    const functions = await converter.convertSchemaFromApiExecutor();
+    const charactersListFunction = functions.find(
+      (def) => def.function.name === "characters",
+    );
+
+    expect(charactersListFunction).toBeTruthy();
+
+    // execute characters query
+    const result = await charactersListFunction!.execute();
+    const data = JSON.parse(result);
+    // first character should be Rick Sanchez
+    expect(data?.characters?.results?.[0]?.name).toBe("Rick Sanchez");
+  });
+
+  test("execute Rick and Morty query", async () => {
+    const fetchApiExecutor = new FetchApiQueryExecutor(
+      "https://rickandmortyapi.graphcdn.app/",
+    );
+    const converter = new GraphQLSchemaConverter(
+      new StandardAPIFunctionFactory(fetchApiExecutor),
+    );
+    const functions = await converter.convertSchemaFromApiExecutor();
+    const charactersListFunction = functions.find(
+      (def) => def.function.name === "characters",
+    );
+
+    expect(charactersListFunction).toBeTruthy();
+
+    // execute characters query
+    const result = await charactersListFunction!.execute();
+    const data = JSON.parse(result);
+    // first character should be Rick Sanchez
+    expect(data?.characters?.results?.[0]?.name).toBe("Rick Sanchez");
   });
 });

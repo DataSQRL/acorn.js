@@ -28,9 +28,7 @@ import typeConverter, { UnwrapRequiredType } from "./type-converter";
 
 export interface SchemaConverter<TApiQuery extends ApiQuery = ApiQuery> {
   convertSchema(schemaDefinition: string): APIFunction<TApiQuery>[];
-  convertSchemaFromUri(
-    schemaDefinition: string,
-  ): Promise<APIFunction<TApiQuery>[]>;
+  convertSchemaFromApiExecutor(): Promise<APIFunction<TApiQuery>[]>;
 }
 
 // TODO: move to schema converter utils
@@ -127,7 +125,7 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     private config: GraphQLSchemaConverterConfig = graphQlSchemaConverterConfig.create(),
   ) {}
 
-  async convertSchemaFromUri() {
+  async convertSchemaFromApiExecutor() {
     const introspectionQuery = {
       query: getIntrospectionQuery(),
     } as TApiQuery;

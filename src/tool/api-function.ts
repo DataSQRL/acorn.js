@@ -1,6 +1,6 @@
 import { ApiQuery, APIQueryExecutor } from "../api";
 import { addOrOverrideFromContext } from "../utils";
-import { Context } from "./context";
+import { Context, DefaultContext } from "./context";
 import {
   FunctionDefinition,
   FunctionDefinitionParameters,
@@ -62,8 +62,8 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
   }
 
   async execute<T extends {}>(
-    argumentsNode: Record<string, unknown>,
-    context: Context<T>,
+    argumentsNode: Record<string, unknown> = {},
+    context: Context<T> = new DefaultContext(),
   ): Promise<string> {
     const variables = addOrOverrideFromContext(
       argumentsNode,

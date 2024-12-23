@@ -23,13 +23,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DataSQRL/acorn-typescript.git"
+    "url": "git+https://github.com/DataSQRL/acorn-node.git"
   },
   "author": "Dmytro Khyzhniak",
   "bugs": {
-    "url": "https://github.com/DataSQRL/acorn-typescript/issues"
+    "url": "https://github.com/DataSQRL/acorn-node/issues"
   },
-  "homepage": "https://github.com/DataSQRL/acorn-typescript#readme",
+  "homepage": "https://github.com/DataSQRL/acorn-node#readme",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.26.0",
