@@ -18,7 +18,9 @@
     "/dist"
   ],
   "exports": {
-    "./langchain": "./dist/langchain"
+    ".": "./dist/index.js",
+    "./langchain": "./dist/langchain/index.js",
+    "./package.json": "./package.json"
   },
   "publishConfig": {
     "access": "public",
