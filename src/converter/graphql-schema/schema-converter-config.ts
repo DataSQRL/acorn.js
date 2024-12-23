@@ -5,6 +5,7 @@ export type GraphQLSchemaConverterConfigOperationFilter = (
 export interface GraphQLSchemaConverterConfig {
   operationFilter: GraphQLSchemaConverterConfigOperationFilter;
   maxDepth: number;
+  verbose: boolean;
 }
 
 export const alwaysTrulyOperationFilter: GraphQLSchemaConverterConfigOperationFilter =
@@ -25,9 +26,11 @@ const graphQlSchemaConverterConfig = {
   create: (
     operationFilter = alwaysTrulyOperationFilter,
     maxDepth = 3,
+    verbose = false,
   ): GraphQLSchemaConverterConfig => ({
     operationFilter,
     maxDepth,
+    verbose,
   }),
 };
 export default graphQlSchemaConverterConfig;

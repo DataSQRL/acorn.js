@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 
 function waitForQuestion(agent: RickAndMortyAgent) {
   rl.question(
-    " >> Type your next question or `exit` to stop chat:",
+    " >> Type your next question or `exit` to stop chat:\n",
     async (message) => {
       if (message === "exit") {
         rl.close();

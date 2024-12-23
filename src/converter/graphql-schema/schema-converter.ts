@@ -230,14 +230,18 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     if (type instanceof GraphQLObjectType) {
       // Don't recurse in a cycle or if depth limit is exceeded
       if (context.path.includes(type)) {
-        console.info(
-          `Detected cycle on operation '${context.operationName}'. Aborting traversal.`,
-        );
+        if (this.config.verbose) {
+          console.info(
+            `Detected cycle on operation '${context.operationName}'. Aborting traversal.`,
+          );
+        }
         return { success: false, queryParams, queryBody };
       } else if (context.path.length + 1 > this.config.maxDepth) {
-        console.info(
-          `Aborting traversal because depth limit exceeded on operation '${context.operationName}'`,
-        );
+        if (this.config.verbose) {
+          console.info(
+            `Aborting traversal because depth limit exceeded on operation '${context.operationName}'`,
+          );
+        }
         return { success: false, queryParams, queryBody };
       }
     }
