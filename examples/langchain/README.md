@@ -6,6 +6,8 @@ It creates LangGraph and supplies it with tools automatically created from Graph
 
 Basic setup of the agent can be found in [./rick-and-morty-agent.ts](./rick-and-morty-agent.ts).
 
+_Please take a note `@langchain/core` and `zod` must be installed in your project to use `@datasqrl/acorn-node/langchain`_
+
 ## To run an example script
 
 1. Install dependencies
@@ -23,7 +25,7 @@ npm run start
 
 or...
 
-3. Run interactive chat in terminal
+3. Run interactive chat in your terminal
 
 ```sh
 export OPENAI_API_KEY=sk-...

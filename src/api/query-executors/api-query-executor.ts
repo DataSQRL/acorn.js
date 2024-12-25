@@ -14,7 +14,6 @@ export interface APIQueryExecutor<TApiQuery extends ApiQuery = ApiQuery> {
     functionDef: FunctionDefinition,
     args?: Record<string, unknown>,
   ): ValidationResult;
-  validate(apiQuery: TApiQuery): ValidationResult;
 
   /**
    * Executes the given query with the provided arguments against the API and returns the result as

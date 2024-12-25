@@ -10,6 +10,11 @@ export type RickAndMortyAgent =
     : never;
 
 const createRickAndMortyAgent = async () => {
+  if (!process.env.OPENAI_API_KEY) {
+    console.error("OPENAI_API_KEY env variable is missing!");
+    process.exit(1);
+  }
+
   // See https://rickandmortyapi.com for more info
   const API_URI = "https://rickandmortyapi.graphcdn.app/";
 

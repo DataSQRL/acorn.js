@@ -1,4 +1,5 @@
-import { ValidationResult } from "../../tool";
+import Ajv from "ajv";
+import { ErrorType, FunctionDefinition, ValidationResult } from "../../tool";
 import { ApiQuery } from "../api-query";
 import { APIQueryExecutor } from "./api-query-executor";
 
@@ -9,10 +10,15 @@ import { APIQueryExecutor } from "./api-query-executor";
 export class FetchApiQueryExecutor<TApiQuery extends ApiQuery = ApiQuery>
   implements APIQueryExecutor<TApiQuery>
 {
+  protected ajv: Ajv;
+
   constructor(
     protected readonly graphqlUri: string,
+    public enableValidation: boolean = false,
     protected readonly headers?: Record<string, string>,
-  ) {}
+  ) {
+    this.ajv = new Ajv();
+  }
 
   protected async fetcher(
     body: Record<string, unknown>,
@@ -32,8 +38,37 @@ export class FetchApiQueryExecutor<TApiQuery extends ApiQuery = ApiQuery>
     return data;
   }
 
-  validate(): ValidationResult {
-    return ValidationResult.VALID;
+  validate(
+    functionDef: FunctionDefinition,
+    args?: Record<string, unknown>,
+  ): ValidationResult {
+    if (!this.enableValidation) {
+      return ValidationResult.VALID;
+    }
+
+    try {
+      const isValidArgs = this.ajv.compile(functionDef.parameters);
+
+      if (args && !isValidArgs(args)) {
+        return new ValidationResult(
+          ErrorType.INVALID_ARGUMENT,
+          isValidArgs.errors
+            ?.map(
+              (e) =>
+                e.instancePath.split("/").filter(Boolean).join(".") +
+                " " +
+                e.message,
+            )
+            .join("\n"),
+        );
+      }
+      return ValidationResult.VALID;
+    } catch (e) {
+      return new ValidationResult(
+        ErrorType.INVALID_JSON,
+        e instanceof Error ? e.message : undefined,
+      );
+    }
   }
 
   async executeQuery(

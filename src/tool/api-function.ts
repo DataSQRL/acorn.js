@@ -26,7 +26,7 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
   ) {
     // function is reserved word and cannot be used inc constructor
     this.function = func;
-    const validationResult = apiExecutor.validate(apiQuery);
+    const validationResult = apiExecutor.validate(func);
     if (!validationResult.isValid()) {
       throw new Error(
         `Function [${func.name}] invalid for API [${apiExecutor}]: ${validationResult.errorMessage}`,
@@ -57,7 +57,7 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     };
   }
 
-  validate(argumentsNode: any): ValidationResult {
+  validate(argumentsNode: Record<string, unknown>): ValidationResult {
     return this.apiExecutor.validate(this.getModelFunction(), argumentsNode);
   }
 
@@ -76,7 +76,7 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
 
   async validateAndExecute<T extends {}>(
     argumentsNode: any,
-    context: Context<T>,
+    context: Context<T> = new DefaultContext(),
   ): Promise<string> {
     const validationResult = this.validate(argumentsNode);
 

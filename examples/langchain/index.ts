@@ -2,11 +2,6 @@ import { HumanMessage } from "@langchain/core/messages";
 import rickAndMortyAgent from "./rick-and-morty-agent";
 
 const bootstrap = async () => {
-  if (!process.env.OPENAI_API_KEY) {
-    console.error("OPENAI_API_KEY env variable is missing");
-    process.exit(1);
-  }
-
   const agent = await rickAndMortyAgent.create();
 
   // See LangChain docs for more info on agent usage

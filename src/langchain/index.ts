@@ -91,7 +91,7 @@ export function toLangChainTools(
   if (Array.isArray(toolsInfo)) {
     return toolsInfo.map((t) => toLangChainTools(t, toolParams));
   }
-  return tool((input) => toolsInfo.execute(input), {
+  return tool((input) => toolsInfo.validateAndExecute(input), {
     ...toolParams,
     name: toolsInfo.function.name,
     description: toolsInfo.function.description,

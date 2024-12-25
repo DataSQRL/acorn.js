@@ -1,5 +1,5 @@
 {
-  "name": "langgraph-example",
+  "name": "langchain-example",
   "version": "1.0.0",
   "description": "",
   "main": "index.ts",
@@ -14,9 +14,10 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@datasqrl/acorn-node": "^1.0.6",
+    "@datasqrl/acorn-node": "^1.0.7",
     "@langchain/core": "^0.3.26",
     "@langchain/langgraph": "^0.2.34",
-    "@langchain/openai": "^0.3.16"
+    "@langchain/openai": "^0.3.16",
+    "zod": "^3.24.1"
   }
 }
