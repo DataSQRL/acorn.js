@@ -12,19 +12,12 @@ export interface ChatPersistence {
   ): Promise<TChatMessage[]>;
 }
 
-// TODO: move to a separate class instance
 export const ChatPersistenceNone: ChatPersistence = {
-  async saveChatMessage<T extends {}>(
-    message: T,
-    context: Context<T>,
-  ): Promise<string> {
+  async saveChatMessage(): Promise<string> {
     return "disabled";
   },
 
-  async getChatMessages<T extends {}, TChatMessage>(
-    context: Context<T>,
-    limit: number,
-  ): Promise<TChatMessage[]> {
+  async getChatMessages<TChatMessage>(): Promise<TChatMessage[]> {
     return [];
   },
 };

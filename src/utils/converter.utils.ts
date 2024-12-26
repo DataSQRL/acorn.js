@@ -1,4 +1,15 @@
 import { Location } from "graphql/language";
+import { FunctionDefinitionParameters } from "../tool";
+import { UnwrapRequiredType, VisitContext } from "../converter";
+import typeConverter from "../converter/graphql-schema/type-converter";
+import { printType } from "graphql/utilities";
+import {
+  GraphQLArgument,
+  GraphQLInputField,
+  GraphQLInputObjectType,
+  GraphQLObjectType,
+  GraphQLString,
+} from "graphql/type";
 
 const matchers = [
   {
@@ -84,4 +95,85 @@ export const getNodeStringByLocation = (
     .filter(Boolean);
 
   return lines.join("\n");
+};
+
+export const processField = (
+  params: FunctionDefinitionParameters,
+  ctx: VisitContext,
+  numArgs: number,
+  unwrappedType: UnwrapRequiredType,
+  argName: string,
+  originalName: string,
+  description?: string,
+) => {
+  let queryBody = "";
+  let queryHeader = "";
+  const argDef = typeConverter.convertToArgument(unwrappedType.type);
+  argDef.description = description;
+
+  if (numArgs > 0) {
+    queryBody += ", ";
+  }
+  if (ctx.numArgs + numArgs > 0) {
+    queryHeader += ", ";
+  }
+
+  if (unwrappedType.required) {
+    params.required.push(argName);
+  }
+  params.properties[argName] = argDef;
+
+  argName = "$" + argName;
+  queryBody += originalName + ": " + argName;
+
+  return {
+    argName,
+    queryHeader,
+    queryBody,
+  };
+};
+
+export const extractTypeFromDummy = (output: string, fieldName: string) => {
+  // Remove comments
+  output = output
+    .split("\n")
+    .filter((line) => !line.trim().startsWith("#"))
+    .join("\n");
+
+  const pattern = new RegExp(`${fieldName}\\s*:\\s*([^)}]+)`);
+  const match = output.match(pattern);
+
+  if (!match) {
+    throw new Error(`Could not find type in: ${output}`);
+  }
+
+  return match[1].trim();
+};
+export const printFieldType = (field: GraphQLInputField) => {
+  const type = new GraphQLInputObjectType({
+    name: "DummyType",
+    fields: {
+      [field.name]: field,
+    },
+  });
+  const output = printType(type);
+  return extractTypeFromDummy(output, field.name);
+};
+
+export const printArgumentType = (argument: GraphQLArgument) => {
+  const { description, ...argumentWithoutDescription } = argument;
+
+  const type = new GraphQLObjectType({
+    name: "DummyType",
+    fields: {
+      dummyField: {
+        type: GraphQLString,
+        args: {
+          [argumentWithoutDescription.name]: argumentWithoutDescription,
+        },
+      },
+    },
+  });
+  const output = printType(type);
+  return extractTypeFromDummy(output, argument.name);
 };

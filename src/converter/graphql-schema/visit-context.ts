@@ -1,4 +1,4 @@
-import { GraphQLObjectType } from "graphql";
+import { GraphQLObjectType } from "graphql/type";
 import { combineArgNameStrings } from "../../utils";
 
 export class VisitContext {

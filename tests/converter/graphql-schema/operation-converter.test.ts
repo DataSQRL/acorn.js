@@ -1,6 +1,6 @@
 import { describe, expect, test } from "@jest/globals";
 import { convertOperations } from "../../../src";
-import { GraphQLError } from "graphql";
+import { GraphQLError } from "graphql/error";
 
 describe("GraphQlOperationConverter", () => {
   test("convertOperations should throw GraphQLError: SyntaxError on invalid operation", () => {

@@ -7,7 +7,7 @@ import {
   GraphQLNonNull,
   GraphQLOutputType,
   GraphQLScalarType,
-} from "graphql";
+} from "graphql/type";
 
 export interface TypeNodeProcessor {
   kind: Kind;
