@@ -1,5 +1,5 @@
 import { describe, expect, test } from "@jest/globals";
-import { toLangChainTools } from "../../src/langchain";
+import { toLangChainTools } from "../../src/modules/langchain";
 import { TestUtil } from "../test.utils";
 import { APIFunction } from "../../src";
 import { z } from "zod";

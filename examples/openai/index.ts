@@ -1,0 +1,66 @@
+import { GraphQLSchemaConverter } from "@datasqrl/acorn-node";
+import { OpenAI } from "openai";
+import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
+import { printMessage, printToolUsage } from "./print.utils";
+import {
+  createOpenAiToolResults,
+  toOpenAiTools,
+} from "@datasqrl/acorn-node/openai";
+
+if (!process.env.OPENAI_API_KEY) {
+  console.error("OPENAI_API_KEY env variable is missing!");
+  process.exit(1);
+}
+
+const bootstrap = async () => {
+  // See https://rickandmortyapi.com for more info
+  const API_URI = "https://rickandmortyapi.graphcdn.app/";
+
+  // Step 1. Create Tools from API
+  // TODO: enable validation
+  const jsonTools = await GraphQLSchemaConverter.createToolsFromApiUri(API_URI);
+
+  // replace with GraphQLMemorySaver
+  const messages: ChatCompletionMessageParam[] = [];
+
+  const userRequest: ChatCompletionMessageParam = {
+    role: "user",
+    content: "Show top 3 characters from location Earth (C-137)",
+  };
+  messages.push(userRequest);
+  printMessage(userRequest);
+
+  const openai = new OpenAI();
+  // Send user message
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages,
+    tools: toOpenAiTools(jsonTools),
+  });
+
+  // Add message to history
+  messages.push(response.choices[0].message);
+  printToolUsage(response.choices[0].message);
+
+  // Process function calls
+  const functionCallResultMessages = await createOpenAiToolResults(
+    response.choices[0].message,
+    jsonTools,
+  );
+  // Add function call results to history
+  messages.push(...functionCallResultMessages);
+
+  if (!functionCallResultMessages.length) {
+    console.log("No functions were called");
+    return;
+  }
+  // If there were any function calls
+  // send another completion request to get response in a text format.
+  const final_response = await openai.chat.completions.create({
+    model: "gpt-4o",
+    messages,
+  });
+
+  printMessage(final_response.choices[0].message);
+};
+bootstrap();

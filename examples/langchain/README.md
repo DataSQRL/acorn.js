@@ -1,6 +1,6 @@
-# Rick and morty API powered AI agent
+# `@datasqrl/acorn-node` usage example with `langchain`.
 
-This is `@datasqrl/acorn-node` package usage example with `langchain`.
+This example contains Rick and morty API powered AI agent implementation.
 
 It creates LangGraph and supplies it with tools automatically created from GraphQL API.
 

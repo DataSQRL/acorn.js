@@ -7,6 +7,11 @@ import {
 } from "./function-definition";
 import { ValidationResult } from "./validation-result";
 
+export interface ToolCall {
+  name: string;
+  arguments: Record<string, unknown>;
+}
+
 export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
   public static readonly createInvalidCallMessage = (
     functionName: string,
@@ -15,6 +20,37 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     `It looks like you tried to call function \`${functionName}\`, ` +
     `but this has failed with the following error: ${errorMessage}. ` +
     "Please retry to call the function again. Send ONLY the JSON as a response.";
+
+  public static async executeTools(
+    toolsToCall: ToolCall,
+    toolDefinitions: APIFunction[],
+  ): Promise<string>;
+  public static async executeTools(
+    toolsToCall: ToolCall[],
+    toolDefinitions: APIFunction[],
+  ): Promise<string[]>;
+  public static async executeTools(
+    toolsToCall: ToolCall[] | ToolCall,
+    toolDefinitions: APIFunction[],
+  ) {
+    const toolsMap = new Map(toolDefinitions.map((t) => [t.getName(), t]));
+
+    if (!Array.isArray(toolsToCall)) {
+      // execute single tool
+      const apiFunction = toolsMap.get(toolsToCall.name);
+      const res = await apiFunction?.validateAndExecute(
+        toolsToCall.arguments,
+        new DefaultContext(),
+      );
+      return res || "";
+    }
+
+    return Promise.all(
+      toolsToCall.map((toolCall) => {
+        return APIFunction.executeTools(toolCall, toolDefinitions);
+      }) || [],
+    );
+  }
 
   readonly function: FunctionDefinition;
 

@@ -1,0 +1,19 @@
+{
+  "name": "openai-example",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@datasqrl/acorn-node": "^1.0.7",
+    "openai": "^4.77.0"
+  }
+}

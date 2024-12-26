@@ -9,6 +9,7 @@ export interface FunctionDefinitionParameters {
   type: string;
   properties: Record<string, FunctionDefinitionArgument>;
   required: string[];
+  [property: string]: unknown;
 }
 /**
  * Definition of a chat function that can be invoked by the language model.

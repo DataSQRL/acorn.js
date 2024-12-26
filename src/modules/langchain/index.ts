@@ -3,8 +3,8 @@ import type {
   APIFunction,
   FunctionDefinitionArgument,
   FunctionDefinitionParameters,
-} from "../tool";
-import type { ApiQuery } from "../api";
+} from "../../tool";
+import type { ApiQuery } from "../../api";
 import { z, ZodSchema } from "zod";
 
 const zodSchemaProcessors = [
@@ -76,6 +76,9 @@ export const jsonParamsToZodSchema = (params: FunctionDefinitionParameters) => {
   return z.object(fields);
 };
 
+/**
+ * Convert `APIFunction[]` to array of tools supported by `@langchain/langgraph`
+ */
 export function toLangChainTools(
   toolsInfo: APIFunction<ApiQuery>[],
   toolParams?: ToolParams,

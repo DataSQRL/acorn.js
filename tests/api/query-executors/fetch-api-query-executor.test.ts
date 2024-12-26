@@ -26,14 +26,14 @@ describe("FetchApiQueryExecutor", () => {
     },
   };
   test("should validate function parameters schema", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub);
+    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
 
     const result = apiExecutor.validate(validFunctionDefinitionMock);
 
     expect(result.errorType).toBe(ErrorType.NONE);
   });
   test("should throw on invalid function parameters schema", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub);
+    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
 
     const result = apiExecutor.validate(invalidFunctionDefinitionMock);
 
@@ -41,7 +41,7 @@ describe("FetchApiQueryExecutor", () => {
     expect(result.errorMessage?.startsWith("schema is invalid: ")).toBeTruthy();
   });
   test("should validate function arguments", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub);
+    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
     const validArgs = { id: "42" };
 
     const result = apiExecutor.validate(validFunctionDefinitionMock, validArgs);
@@ -49,7 +49,7 @@ describe("FetchApiQueryExecutor", () => {
     expect(result.errorType).toBe(ErrorType.NONE);
   });
   test("should throw on invalid function arguments", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub);
+    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
     const invalidArgs = { id: 1 };
 
     const result = apiExecutor.validate(
