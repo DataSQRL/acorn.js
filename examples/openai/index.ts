@@ -1,4 +1,4 @@
-import { GraphQLSchemaConverter } from "@datasqrl/acorn-node";
+import { createToolsFromApiUri } from "@datasqrl/acorn-node";
 import { OpenAI } from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { printMessage, printToolUsage } from "./print.utils";
@@ -13,14 +13,14 @@ if (!process.env.OPENAI_API_KEY) {
 }
 
 const bootstrap = async () => {
-  // See https://rickandmortyapi.com for more info
-  const API_URI = "https://rickandmortyapi.graphcdn.app/";
+  // Create Tools from API
+  const jsonTools = await createToolsFromApiUri({
+    // See https://rickandmortyapi.com for more info
+    graphqlUri: "https://rickandmortyapi.graphcdn.app/",
+    enableValidation: true,
+  });
 
-  // Step 1. Create Tools from API
-  // TODO: enable validation
-  const jsonTools = await GraphQLSchemaConverter.createToolsFromApiUri(API_URI);
-
-  // replace with GraphQLMemorySaver
+  // TODO: replace with GraphQLMemorySaver
   const messages: ChatCompletionMessageParam[] = [];
 
   const userRequest: ChatCompletionMessageParam = {

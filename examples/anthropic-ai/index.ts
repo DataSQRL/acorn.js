@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { MessageParam } from "@anthropic-ai/sdk/resources/index.mjs";
-import { GraphQLSchemaConverter } from "@datasqrl/acorn-node";
+import { createToolsFromApiUri } from "@datasqrl/acorn-node";
 import { printMessage, printToolUsage } from "./print.utils";
 import {
   createAnthropicToolResult,
@@ -13,12 +13,12 @@ if (!process.env.ANTHROPIC_API_KEY) {
 }
 
 const bootstrap = async () => {
-  // See https://rickandmortyapi.com for more info
-  const API_URI = "https://rickandmortyapi.graphcdn.app/";
-
-  // Step 1. Create Tools from API
-  // TODO: enable validation
-  const jsonTools = await GraphQLSchemaConverter.createToolsFromApiUri(API_URI);
+  // Create Tools from API
+  const jsonTools = await createToolsFromApiUri({
+    // See https://rickandmortyapi.com for more info
+    graphqlUri: "https://rickandmortyapi.graphcdn.app/",
+    enableValidation: true,
+  });
 
   // replace with GraphQLMemorySaver
   const messages: MessageParam[] = [];

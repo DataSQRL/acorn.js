@@ -1,19 +1,18 @@
 {
-  "name": "openai-example",
+  "name": "anthropic-ai-example",
   "version": "1.0.0",
-  "description": "",
   "main": "index.ts",
   "scripts": {
     "start": "ts-node index.ts"
   },
   "author": "",
   "license": "ISC",
+  "description": "",
   "devDependencies": {
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@datasqrl/acorn-node": "^1.0.9",
-    "openai": "^4.77.0"
+    "@datasqrl/acorn-node": "^1.0.9"
   }
 }

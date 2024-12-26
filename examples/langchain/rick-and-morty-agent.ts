@@ -1,4 +1,4 @@
-import { GraphQLSchemaConverter } from "@datasqrl/acorn-node";
+import { createToolsFromApiUri } from "@datasqrl/acorn-node";
 import { toLangChainTools } from "@datasqrl/acorn-node/langchain";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
@@ -15,11 +15,11 @@ const createRickAndMortyAgent = async () => {
     process.exit(1);
   }
 
-  // See https://rickandmortyapi.com for more info
-  const API_URI = "https://rickandmortyapi.graphcdn.app/";
-
   // Step 1. Create Tools from API
-  const jsonTools = await GraphQLSchemaConverter.createToolsFromApiUri(API_URI);
+  const jsonTools = await createToolsFromApiUri({
+    // See https://rickandmortyapi.com for more info
+    graphqlUri: "https://rickandmortyapi.graphcdn.app/",
+  });
 
   // Step 2. Create agent
   const agent = createReactAgent({
