@@ -3,6 +3,12 @@ import { ErrorType, FunctionDefinition, ValidationResult } from "../../tool";
 import { ApiQuery } from "../api-query";
 import { APIQueryExecutor } from "./api-query-executor";
 
+export interface FetchApiQueryExecutorConfig {
+  graphqlUri: string;
+  enableValidation?: boolean;
+  headers?: Record<string, string>;
+}
+
 /**
  * Default executor that always says function definition is valid
  * and returns "void" as execution result
@@ -11,12 +17,15 @@ export class FetchApiQueryExecutor<TApiQuery extends ApiQuery = ApiQuery>
   implements APIQueryExecutor<TApiQuery>
 {
   protected ajv: Ajv;
+  protected readonly graphqlUri: string;
+  public enableValidation: boolean;
+  protected readonly headers?: Record<string, string>;
 
-  constructor(
-    protected readonly graphqlUri: string,
-    public enableValidation: boolean = false,
-    protected readonly headers?: Record<string, string>,
-  ) {
+  constructor(config: FetchApiQueryExecutorConfig) {
+    this.graphqlUri = config.graphqlUri;
+    this.enableValidation = config.enableValidation || false;
+    this.headers = config.headers;
+
     this.ajv = new Ajv();
   }
 

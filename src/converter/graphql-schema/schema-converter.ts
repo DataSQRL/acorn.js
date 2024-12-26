@@ -11,7 +11,12 @@ import {
   printSchema,
   printType,
 } from "graphql";
-import { ApiQuery, FetchApiQueryExecutor } from "../../api";
+import {
+  ApiQuery,
+  APIQueryExecutor,
+  FetchApiQueryExecutor,
+  FetchApiQueryExecutorConfig,
+} from "../../api";
 import { APIFunction, FunctionDefinitionParameters } from "../../tool";
 import { APIFunctionFactory } from "../api-function-factory";
 import graphQlSchemaConverterConfig, {
@@ -122,16 +127,26 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
   implements SchemaConverter<TApiQuery>
 {
   constructor(
-    private functionFactory: APIFunctionFactory<TApiQuery>,
+    private functionFactory: APIFunctionFactory<TApiQuery> = new StandardAPIFunctionFactory<TApiQuery>(),
     private config: GraphQLSchemaConverterConfig = graphQlSchemaConverterConfig.create(),
   ) {}
 
-  static createToolsFromApiUri(uri: string) {
-    const apiExecutor = new FetchApiQueryExecutor(uri);
+  static createToolsFromApiUri(config: FetchApiQueryExecutorConfig) {
+    const apiExecutor = new FetchApiQueryExecutor(config);
     const converter = new GraphQLSchemaConverter(
       new StandardAPIFunctionFactory(apiExecutor),
     );
     return converter.convertSchemaFromApiExecutor();
+  }
+
+  static convertSchema(
+    schemaDefinition: string,
+    apiExecutor?: APIQueryExecutor,
+  ): APIFunction<ApiQuery>[] {
+    const converter = new GraphQLSchemaConverter(
+      new StandardAPIFunctionFactory(apiExecutor),
+    );
+    return converter.convertSchema(schemaDefinition);
   }
 
   async convertSchemaFromApiExecutor() {
@@ -366,3 +381,7 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     };
   }
 }
+// Re-export static method so it can be used in a functional style in minimal example
+export const createToolsFromApiUri =
+  GraphQLSchemaConverter.createToolsFromApiUri;
+export const convertSchema = GraphQLSchemaConverter.convertSchema;

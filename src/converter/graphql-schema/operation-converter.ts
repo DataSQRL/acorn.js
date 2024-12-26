@@ -5,7 +5,12 @@ import {
   parse,
   VariableDefinitionNode,
 } from "graphql/language";
-import { ApiQuery } from "../../api";
+import {
+  ApiQuery,
+  FetchApiQueryExecutor,
+  FetchApiQueryExecutorConfig,
+  VoidApiQueryExecutor,
+} from "../../api";
 import {
   APIFunction,
   FunctionDefinition,
@@ -24,12 +29,44 @@ export interface OperationConverter<TApiQuery extends ApiQuery = ApiQuery> {
   convertOperations(operationDefinition: string): APIFunction<TApiQuery>[];
 }
 
+export interface OperationConverterConfig
+  extends Omit<FetchApiQueryExecutorConfig, "graphqlUri"> {
+  // When set, FetchApiQueryExecutor with provided URI will be used as apiExecutor for converted Api Functions
+  graphqlUri?: string;
+}
+
 export class GraphQlOperationConverter<TApiQuery extends ApiQuery = ApiQuery>
   implements OperationConverter<TApiQuery>
 {
   constructor(
     public readonly functionFactory: APIFunctionFactory<TApiQuery> = new StandardAPIFunctionFactory<TApiQuery>(),
   ) {}
+
+  /**
+   * Converts provided operation definitions to API function mappings
+   * @param operationDefinition string that contains a list of operation definitions (queries & mutations).
+   * But not an entire schema
+   * @param operationConverterConfig configuration of GraphQlOperationConverter
+   * @returns list of API Functions mapped from provided definitions
+   */
+  static convertOperations(
+    operationDefinition: string,
+    operationConverterConfig?: OperationConverterConfig,
+  ) {
+    const apiExecutor = operationConverterConfig?.graphqlUri
+      ? new FetchApiQueryExecutor(
+          operationConverterConfig as FetchApiQueryExecutorConfig,
+        )
+      : new VoidApiQueryExecutor();
+    if (operationConverterConfig?.enableValidation != null) {
+      apiExecutor.enableValidation = operationConverterConfig.enableValidation;
+    }
+
+    const converter = new GraphQlOperationConverter(
+      new StandardAPIFunctionFactory<ApiQuery>(apiExecutor),
+    );
+    return converter.convertOperations(operationDefinition);
+  }
 
   /**
    * Converts provided operation definitions to API function mappings
@@ -167,3 +204,5 @@ export class GraphQlOperationConverter<TApiQuery extends ApiQuery = ApiQuery>
     };
   }
 }
+// Re-export static method so it can be used in a functional style in minimal example
+export const convertOperations = GraphQlOperationConverter.convertOperations;

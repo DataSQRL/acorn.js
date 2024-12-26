@@ -11,6 +11,8 @@ export class VoidApiQueryExecutor<TApiQuery extends ApiQuery = ApiQuery>
 {
   protected static readonly EXECUTION_RESULT = "void";
 
+  enableValidation: boolean = false;
+
   validate(): ValidationResult {
     return ValidationResult.VALID;
   }

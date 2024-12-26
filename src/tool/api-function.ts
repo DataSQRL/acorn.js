@@ -93,7 +93,7 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     };
   }
 
-  validate(argumentsNode: Record<string, unknown>): ValidationResult {
+  validate(argumentsNode: Record<string, unknown> = {}): ValidationResult {
     return this.apiExecutor.validate(this.getModelFunction(), argumentsNode);
   }
 
@@ -111,7 +111,7 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
   }
 
   async validateAndExecute<T extends {}>(
-    argumentsNode: any,
+    argumentsNode: Record<string, unknown> = {},
     context: Context<T> = new DefaultContext(),
   ): Promise<string> {
     const validationResult = this.validate(argumentsNode);
@@ -119,15 +119,17 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     if (validationResult.isValid()) {
       return this.execute(argumentsNode, context);
     }
-    return APIFunction.createInvalidCallMessage(
-      this.function.name,
-      validationResult.errorMessage,
+    throw new Error(
+      APIFunction.createInvalidCallMessage(
+        this.function.name,
+        validationResult.errorMessage,
+      ),
     );
   }
 
   async validateAndExecuteFromString<T extends {}>(
     argsJson: string,
-    context: Context<T>,
+    context: Context<T> = new DefaultContext(),
   ): Promise<string> {
     try {
       const parsedArguments = JSON.parse(argsJson);

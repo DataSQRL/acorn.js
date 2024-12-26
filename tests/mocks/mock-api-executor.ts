@@ -4,10 +4,12 @@ import { FunctionDefinition } from "../../src/tool/function-definition";
 import { ValidationResult } from "../../src/tool/validation-result";
 export class MockAPIExecutor implements APIQueryExecutor<ApiQuery> {
   private queryToResult: (query: string) => string;
+  enableValidation: boolean = false;
 
   constructor(queryToResult: (query: string) => string) {
     this.queryToResult = queryToResult;
   }
+
   static create(uniformResult: string): MockAPIExecutor {
     return new MockAPIExecutor(() => uniformResult);
   }

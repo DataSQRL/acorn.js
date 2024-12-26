@@ -6,7 +6,10 @@ import {
 } from "../../../src";
 
 describe("FetchApiQueryExecutor", () => {
-  const uriStub = "";
+  const apiExecutorConfig = {
+    graphqlUri: "",
+    enableValidation: true,
+  };
   const validFunctionDefinitionMock: FunctionDefinition = {
     name: "test function",
     parameters: {
@@ -26,14 +29,14 @@ describe("FetchApiQueryExecutor", () => {
     },
   };
   test("should validate function parameters schema", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
+    const apiExecutor = new FetchApiQueryExecutor(apiExecutorConfig);
 
     const result = apiExecutor.validate(validFunctionDefinitionMock);
 
     expect(result.errorType).toBe(ErrorType.NONE);
   });
   test("should throw on invalid function parameters schema", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
+    const apiExecutor = new FetchApiQueryExecutor(apiExecutorConfig);
 
     const result = apiExecutor.validate(invalidFunctionDefinitionMock);
 
@@ -41,7 +44,7 @@ describe("FetchApiQueryExecutor", () => {
     expect(result.errorMessage?.startsWith("schema is invalid: ")).toBeTruthy();
   });
   test("should validate function arguments", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
+    const apiExecutor = new FetchApiQueryExecutor(apiExecutorConfig);
     const validArgs = { id: "42" };
 
     const result = apiExecutor.validate(validFunctionDefinitionMock, validArgs);
@@ -49,7 +52,7 @@ describe("FetchApiQueryExecutor", () => {
     expect(result.errorType).toBe(ErrorType.NONE);
   });
   test("should throw on invalid function arguments", () => {
-    const apiExecutor = new FetchApiQueryExecutor(uriStub, true);
+    const apiExecutor = new FetchApiQueryExecutor(apiExecutorConfig);
     const invalidArgs = { id: 1 };
 
     const result = apiExecutor.validate(

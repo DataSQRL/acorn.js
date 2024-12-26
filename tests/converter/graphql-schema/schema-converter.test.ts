@@ -104,9 +104,9 @@ describe("GraphQLSchemaConverter Tests", () => {
     const expectedCharactersGraphQLQuery =
       "query characters($page: Int, $name: String, $status: String, $species: String, $type: String, $gender: String) {\ncharacters(page: $page, filter: { name: $name, status: $status, species: $species, type: $type, gender: $gender }) {\ninfo {\ncount\npages\nnext\nprev\n}\nresults {\nid\nname\nstatus\nspecies\ntype\ngender\norigin {\nid\nname\ntype\ndimension\ncreated\n}\nlocation {\nid\nname\ntype\ndimension\ncreated\n}\nimage\nepisode {\nid\nname\nair_date\nepisode\ncreated\n}\ncreated\n}\n}\n\n}";
 
-    const fetchApiExecutor = new FetchApiQueryExecutor(
-      "https://rickandmortyapi.graphcdn.app/",
-    );
+    const fetchApiExecutor = new FetchApiQueryExecutor({
+      graphqlUri: "https://rickandmortyapi.graphcdn.app/",
+    });
     const converter = new GraphQLSchemaConverter(
       new StandardAPIFunctionFactory(fetchApiExecutor),
     );
@@ -123,9 +123,9 @@ describe("GraphQLSchemaConverter Tests", () => {
   });
 
   test("execute Rick and Morty query", async () => {
-    const fetchApiExecutor = new FetchApiQueryExecutor(
-      "https://rickandmortyapi.graphcdn.app/",
-    );
+    const fetchApiExecutor = new FetchApiQueryExecutor({
+      graphqlUri: "https://rickandmortyapi.graphcdn.app/",
+    });
     const converter = new GraphQLSchemaConverter(
       new StandardAPIFunctionFactory(fetchApiExecutor),
     );
@@ -144,9 +144,9 @@ describe("GraphQLSchemaConverter Tests", () => {
   });
 
   test("execute Rick and Morty query", async () => {
-    const fetchApiExecutor = new FetchApiQueryExecutor(
-      "https://rickandmortyapi.graphcdn.app/",
-    );
+    const fetchApiExecutor = new FetchApiQueryExecutor({
+      graphqlUri: "https://rickandmortyapi.graphcdn.app/",
+    });
     const converter = new GraphQLSchemaConverter(
       new StandardAPIFunctionFactory(fetchApiExecutor),
     );

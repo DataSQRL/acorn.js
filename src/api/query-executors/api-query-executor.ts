@@ -3,6 +3,7 @@ import { ValidationResult } from "../../tool/validation-result";
 import { ApiQuery } from "../api-query";
 
 export interface APIQueryExecutor<TApiQuery extends ApiQuery = ApiQuery> {
+  enableValidation: boolean;
   /**
    * Validates that the provided arguments are valid for the given FunctionDefinition.
    *
