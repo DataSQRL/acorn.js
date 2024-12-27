@@ -4,7 +4,7 @@ This is the TypeScript implementation of Acorn Agent which provides the librarie
 
 ## Getting Started
 
-Install package and dependency
+Install package
 
 ```
 npm i @datasqrl/acorn-node
@@ -25,7 +25,7 @@ import { convertSchema } from "@datasqrl/acorn-node";
 // load your graphQL schema from somewhere
 const graphQlSchemaString = "...";
 // You need to implement `APIQueryExecutor` interface to query and validate APIQuery
-// Or use existing FetchApiQueryExecutor provided by package
+// Or use existing `FetchApiQueryExecutor` provided by package
 const apiExecutor = new MyApiQueryExecutor();
 
 // your functions are here
