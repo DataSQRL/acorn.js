@@ -41,3 +41,5 @@ const functions = convertSchema(graphQlSchemaString, apiExecutor);
 - [Integration with `@anthropic-ai/sdk` package](./examples/anthropic-ai)
 
 - [Convert single GraphQL operation to a tool](./examples/convert-operation)
+
+- [Store chat history using your API](./examples/chat-persistence/)

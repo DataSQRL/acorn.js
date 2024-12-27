@@ -1,23 +1,11 @@
-import { Context } from "../tool/context";
-
-export interface ChatPersistence {
-  saveChatMessage<T extends {}>(
-    message: T,
-    context: Context<T>,
+export interface ChatPersistence<TChatMessage> {
+  readonly currentState: TChatMessage[];
+  saveChatMessage<TMutationParams extends {} = {}>(
+    message: TChatMessage,
+    variables: TMutationParams,
   ): Promise<string>;
 
-  getChatMessages<T extends {}, TChatMessage>(
-    context: Context<T>,
-    limit: number,
+  getChatMessages<TQueryParams extends {} = {}>(
+    variables: TQueryParams,
   ): Promise<TChatMessage[]>;
 }
-
-export const ChatPersistenceNone: ChatPersistence = {
-  async saveChatMessage(): Promise<string> {
-    return "disabled";
-  },
-
-  async getChatMessages<TChatMessage>(): Promise<TChatMessage[]> {
-    return [];
-  },
-};

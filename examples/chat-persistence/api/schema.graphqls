@@ -1,0 +1,65 @@
+"An RFC-3339 compliant DateTime Scalar"
+scalar DateTime
+
+type Query {
+  SecReading(sensorid: Float, timeSec: DateTime, limit: Int = 10, offset: Int = 0): [SecReading!]
+  SensorMaxTemp(sensorid: Float, limit: Int = 10, offset: Int = 0): [SensorMaxTemp!]
+
+  """
+  Retrieves User Chat Messages
+  """
+  InternalGetChatMessages(
+    customerid: Int!,
+    limit: Int = 10,
+    offset: Int = 0
+  ): [CustomerChatMessage!]
+}
+
+type SecReading {
+  sensorid: Float!
+  timeSec: DateTime!
+  temp: Float!
+}
+
+type SensorMaxTemp {
+  sensorid: Float!
+  maxTemp: Float!
+}
+
+type CustomerChatMessage {
+  role: String!
+  content: String!
+  name: String
+  functionCall: String
+  customerid: Int!
+  timestamp: String!
+  uuid: String!
+}
+
+type Mutation {
+  InternalSaveChatMessage(message: ChatMessageInput!): CreatedChatMessage
+  AddReading(metric: SensorReadingInput!): CreatedReading
+}
+
+input ChatMessageInput {
+  role: String!
+  content: String!
+  name: String
+  functionCall: String
+  customerid: Int
+}
+
+type CreatedChatMessage {
+  event_time: String!
+}
+
+input SensorReadingInput {
+  sensorid: Int!
+  temperature: Float!
+  humidity: Float!
+}
+
+type CreatedReading {
+  event_time: String!
+  sensorid: Int!
+}

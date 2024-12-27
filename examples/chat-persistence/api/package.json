@@ -1,0 +1,22 @@
+{
+  "version": "1",
+  "enabled-engines": [
+    "vertx",
+    "postgres",
+    "kafka",
+    "flink"
+  ],
+  "script": {
+    "main": "sensors.sqrl",
+    "graphql": "schema.graphqls"
+  },
+  "dependencies": [
+    {
+      "datasqrl.example.sensors": {
+        "name": "datasqrl.example.sensors",
+        "version": "0.5.3",
+        "variant": "dev"
+      }
+    }
+  ]
+}

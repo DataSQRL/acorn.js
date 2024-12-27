@@ -20,14 +20,12 @@ const createRickAndMortyAgent = async () => {
     // See https://rickandmortyapi.com for more info
     graphqlUri: "https://rickandmortyapi.graphcdn.app/",
   });
-
-  // Step 2. Create agent
   const agent = createReactAgent({
     llm: new ChatOpenAI({
       model: "gpt-4o",
     }),
-    checkpointSaver: new MemorySaver(),
     tools: toLangChainTools(jsonTools),
+    checkpointSaver: new MemorySaver(),
   });
 
   return agent;

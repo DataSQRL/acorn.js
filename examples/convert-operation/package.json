@@ -1,5 +1,5 @@
 {
-  "name": "anthropic-ai-example",
+  "name": "convert-operation-example",
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {

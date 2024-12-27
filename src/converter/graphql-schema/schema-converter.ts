@@ -46,10 +46,18 @@ export class GraphQLSchemaConverter<TApiQuery extends ApiQuery = ApiQuery>
     private config: GraphQLSchemaConverterConfig = graphQlSchemaConverterConfig.create(),
   ) {}
 
-  static createToolsFromApiUri(config: FetchApiQueryExecutorConfig) {
-    const apiExecutor = new FetchApiQueryExecutor(config);
+  static createToolsFromApiUri(
+    apiExecutorConfig: FetchApiQueryExecutorConfig,
+    schemaConverterConfig?: GraphQLSchemaConverterConfig,
+  ) {
+    const schemaConverterConfigMerged = {
+      ...graphQlSchemaConverterConfig.create(),
+      ...schemaConverterConfig,
+    };
+    const apiExecutor = new FetchApiQueryExecutor(apiExecutorConfig);
     const converter = new GraphQLSchemaConverter(
       new StandardAPIFunctionFactory(apiExecutor),
+      schemaConverterConfigMerged,
     );
     return converter.convertSchemaFromApiExecutor();
   }

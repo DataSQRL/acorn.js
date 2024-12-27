@@ -16,7 +16,6 @@ const bootstrap = async () => {
     },
     { configurable: { thread_id: "42" } },
   );
-
   console.log(
     agentFinalState.messages[agentFinalState.messages.length - 1].content,
   );
