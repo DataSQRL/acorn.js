@@ -15,7 +15,8 @@ export class ToolChatPersistence<TChatMessage>
   }
 
   /**
-   * Saves the generic chat message with the configured context asynchronously (i.e. does not block).
+   * Saves the generic chat message with the configured context asynchronously.
+   * @param message message to save to the `currentState`. It is not related to variables used in the mutation.
    * @param variables variables to pass to mutation
    * @returns A Promise that resolves to the result as a string.
    */
@@ -30,9 +31,7 @@ export class ToolChatPersistence<TChatMessage>
 
   /**
    * Retrieves saved chat messages from the API via the configured function call.
-   * @param context Context object identifying a user or providing contextual information.
-   * @param limit Maximum number of messages to retrieve.
-   * @param messageClass Constructor for the ChatMessage class.
+   * @param variables variables to pass to query.
    * @returns A list of chat messages for the provided context.
    */
   async getChatMessages<T extends {} = {}>(

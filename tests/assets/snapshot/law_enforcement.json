@@ -26,7 +26,6 @@
         "required": ["make"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query BoloDetails($make: String!, $model: String, $limit: Int = 10, $offset: Int = 0) {\nBoloDetails(make: $make, model: $model, limit: $limit, offset: $offset) {\nbolo_id\nvehicle_id\nissue_date\nstatus\nlast_updated\nmake\nmodel\nyear\nregistration_state\nregistration_number\nlicense_state\ndriver_id\n}\n\n}"
     }
@@ -84,7 +83,6 @@
         "required": ["license_number"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query Driver($license_number: String!, $limit: Int = 10, $offset: Int = 0, $bolos_limit: Int = 10, $bolos_offset: Int = 0, $vehicles_limit: Int = 10, $vehicles_offset: Int = 0, $vehicles_bolos_limit: Int = 10, $vehicles_bolos_offset: Int = 0, $vehicles_tracking_limit: Int = 10, $vehicles_tracking_offset: Int = 0, $warrants_limit: Int = 10, $warrants_offset: Int = 0) {\nDriver(license_number: $license_number, limit: $limit, offset: $offset) {\ndriver_id\nfirst_name\nlast_name\nlicense_number\nlicense_state\ndate_of_birth\nlicense_status\nlicense_expiry_date\nlast_updated\nbolos(limit: $bolos_limit, offset: $bolos_offset) {\nbolo_id\nvehicle_id\nissue_date\nstatus\nlast_updated\nmake\nmodel\nyear\nregistration_state\nregistration_number\nlicense_state\ndriver_id\n}\nvehicles(limit: $vehicles_limit, offset: $vehicles_offset) {\nvehicle_id\nregistration_number\nregistration_state\nregistration_expiry\nmake\nmodel\nyear\nowner_driver_id\nlast_updated\nbolos(limit: $vehicles_bolos_limit, offset: $vehicles_bolos_offset) {\nbolo_id\nvehicle_id\nissue_date\nstatus\nlast_updated\nmake\nmodel\nyear\nregistration_state\nregistration_number\nlicense_state\ndriver_id\n}\ntracking(limit: $vehicles_tracking_limit, offset: $vehicles_tracking_offset) {\nlatitude\nlongitude\nevent_time\n}\n}\nwarrants(limit: $warrants_limit, offset: $warrants_offset) {\nwarrant_id\nperson_id\nwarrant_status\ncrime_description\nstate_of_issuance\nissue_date\nlast_updated\n}\n}\n\n}"
     }
@@ -124,7 +122,6 @@
         "required": ["registration_number"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query Vehicle($registration_number: String!, $limit: Int = 10, $offset: Int = 0, $bolos_limit: Int = 10, $bolos_offset: Int = 0, $tracking_limit: Int = 10, $tracking_offset: Int = 0) {\nVehicle(registration_number: $registration_number, limit: $limit, offset: $offset) {\nvehicle_id\nregistration_number\nregistration_state\nregistration_expiry\nmake\nmodel\nyear\nowner_driver_id\nlast_updated\nbolos(limit: $bolos_limit, offset: $bolos_offset) {\nbolo_id\nvehicle_id\nissue_date\nstatus\nlast_updated\nmake\nmodel\nyear\nregistration_state\nregistration_number\nlicense_state\ndriver_id\n}\ntracking(limit: $tracking_limit, offset: $tracking_offset) {\nlatitude\nlongitude\nevent_time\n}\n}\n\n}"
     }
@@ -150,7 +147,6 @@
         "required": []
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query WarrantsByCrime($crime: String, $limit: Int = 100, $offset: Int = 0) {\nWarrantsByCrime(crime: $crime, limit: $limit, offset: $offset) {\ncrime\nnum_warrants\n}\n\n}"
     }
@@ -176,7 +172,6 @@
         "required": []
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query WarrantsByState($status: String, $limit: Int = 100, $offset: Int = 0) {\nWarrantsByState(status: $status, limit: $limit, offset: $offset) {\nstate\nstatus\nnum_warrants\n}\n\n}"
     }
@@ -204,7 +199,6 @@
         "required": []
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query BolosByWeekState($state: String, $limit: Int = 100, $offset: Int = 0) {\nBolosByWeekState(state: $state, limit: $limit, offset: $offset) {\nweek\nstate\nnum_bolos\n}\n\n}"
     }
@@ -228,7 +222,6 @@
         "required": ["plate", "latitude", "longitude"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "mutation Tracking($plate: String!, $latitude: Float!, $longitude: Float!) {\nTracking(encounter: { plate: $plate, latitude: $latitude, longitude: $longitude }) {\n_uuid\nplate\n}\n\n}"
     }

@@ -28,7 +28,6 @@ describe("GraphQlOperationConverter", () => {
           required: ["temperature"],
         },
       },
-      contextKeys: [],
       apiQuery: {
         query:
           "query HighTemps(\n    $temperature: Float!\n) {\n    ReadingsAboveTemp(temp: $temperature) {\n        sensorid\n        temperature\n    }\n}",
@@ -76,7 +75,6 @@ query HighTemps(
           required: ["role", "content"],
         },
       },
-      contextKeys: [],
       apiQuery: {
         query:
           "mutation SaveChatMessage(\n  $role: String!,\n\t$content: String!,\n\t$name: String,\n  $functionCall: String,\n  $customerid: Int)\n{\n  InternalSaveChatMessage(message: {\n    role: $role,\n    content: $content,\n    name: $name,\n    functionCall: $functionCall,\n    customerId: $customerId\n  }) {\n    event_time\n  }\n}",

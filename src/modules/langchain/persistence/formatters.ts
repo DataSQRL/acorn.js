@@ -117,6 +117,11 @@ const defaultDataSqrlApi: PersistentSaverFormatters<DataSQRLChatMessage> = {
 };
 
 export const persistenceFormatters = {
+  /**
+   * These are default message formatters designed to be used with DataSQRL Chat API
+   * If your API uses a different message format, you can define own ChatMessage interface
+   * and implement formatters for it
+   */
   defaultDataSqrlApi,
   baseMessageMappers,
 };

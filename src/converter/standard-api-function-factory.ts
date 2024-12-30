@@ -10,7 +10,6 @@ export class StandardAPIFunctionFactory<TApiQuery extends ApiQuery = ApiQuery>
 {
   constructor(
     public readonly apiExecutor: APIQueryExecutor<TApiQuery> = new VoidApiQueryExecutor<TApiQuery>(),
-    private contextKeys: Set<string> = new Set(),
   ) {}
 
   /**
@@ -23,11 +22,6 @@ export class StandardAPIFunctionFactory<TApiQuery extends ApiQuery = ApiQuery>
     functionDef: FunctionDefinition,
     query: TApiQuery,
   ): APIFunction<TApiQuery> {
-    return new APIFunction<TApiQuery>(
-      functionDef,
-      this.contextKeys,
-      query,
-      this.apiExecutor,
-    );
+    return new APIFunction<TApiQuery>(functionDef, query, this.apiExecutor);
   }
 }

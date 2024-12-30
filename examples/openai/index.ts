@@ -20,7 +20,6 @@ const bootstrap = async () => {
     enableValidation: true,
   });
 
-  // TODO: replace with GraphQLMemorySaver
   const messages: ChatCompletionMessageParam[] = [];
 
   const userRequest: ChatCompletionMessageParam = {

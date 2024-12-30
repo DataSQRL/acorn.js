@@ -12,7 +12,7 @@ import { APIFunction } from "../../../src/tool";
 import { ApiQuery, FetchApiQueryExecutor } from "../../../src/api";
 
 const apiExecutor = MockAPIExecutor.create("none");
-const functionFactory = new StandardAPIFunctionFactory(apiExecutor, new Set());
+const functionFactory = new StandardAPIFunctionFactory(apiExecutor);
 const operationConverter = new GraphQlOperationConverter(functionFactory);
 
 function getConverter(): GraphQLSchemaConverter {
@@ -41,7 +41,7 @@ function snapshotFunctions(
 describe("GraphQLSchemaConverter Tests", () => {
   test("testNutshop", () => {
     const converter = new GraphQLSchemaConverter(
-      new StandardAPIFunctionFactory(apiExecutor, new Set(["customerid"])),
+      new StandardAPIFunctionFactory(apiExecutor),
       graphQlSchemaConverterConfig.create(
         graphQlSchemaConverterConfig.createIgnorePrefixOperationFilter(
           "internal",
@@ -62,9 +62,6 @@ describe("GraphQLSchemaConverter Tests", () => {
     expect(ordersFunction?.function.parameters.properties).toHaveProperty(
       "customerid",
     );
-    expect(
-      ordersFunction?.getModelFunction().parameters.properties,
-    ).not.toHaveProperty("customerid");
 
     snapshotFunctions(functions, "nutshop");
   });

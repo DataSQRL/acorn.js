@@ -19,6 +19,7 @@ export interface PersistentSaverFormatters<TChatMessage> {
   ) => TChatMessage;
   queryResponseToMessageList: (apiMessages: TChatMessage[]) => BaseMessage[];
 }
+
 export interface DataSQRLChatMessage {
   uuid: string;
   role: string;
@@ -28,6 +29,7 @@ export interface DataSQRLChatMessage {
   name?: string;
   functionCall?: string;
 }
+
 export class PersistentSaver<
   TChatMessage extends {} = DataSQRLChatMessage,
 > extends MemorySaver {

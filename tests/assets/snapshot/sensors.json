@@ -21,7 +21,6 @@
         "required": ["sensorid"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query SensorReading($sensorid: Int!, $limit: Int = 10, $offset: Int = 0) {\nSensorReading(sensorid: $sensorid, limit: $limit, offset: $offset) {\nsensorid\ntemperature\nevent_time\n}\n\n}"
     }
@@ -43,7 +42,6 @@
         "required": ["temp"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query ReadingsAboveTemp($temp: Float!, $limit: Int = 10) {\nReadingsAboveTemp(temp: $temp, limit: $limit) {\nsensorid\ntemperature\nevent_time\n}\n\n}"
     }
@@ -70,7 +68,6 @@
         "required": []
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query SensorMaxTempLastMinute($sensorid: Int, $limit: Int = 10, $offset: Int = 0) {\nSensorMaxTempLastMinute(sensorid: $sensorid, limit: $limit, offset: $offset) {\nsensorid\nmaxTemp\nlast_updated\n}\n\n}"
     }
@@ -97,7 +94,6 @@
         "required": []
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query SensorMaxTemp($sensorid: Int, $limit: Int = 10, $offset: Int = 0) {\nSensorMaxTemp(sensorid: $sensorid, limit: $limit, offset: $offset) {\nsensorid\nmaxTemp\nlast_updated\n}\n\n}"
     }
@@ -118,7 +114,6 @@
         "required": ["sensorid", "temperature"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "mutation AddReading($sensorid: Int!, $temperature: Float!) {\nAddReading(metric: { sensorid: $sensorid, temperature: $temperature }) {\nsensorid\ntemperature\nevent_time\n}\n\n}"
     }
@@ -138,7 +133,6 @@
         "required": ["temperature"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query HighTemps(\n    $temperature: Float!\n) {\n    ReadingsAboveTemp(temp: $temperature) {\n        sensorid\n        temperature\n    }\n}"
     }
@@ -157,7 +151,6 @@
         "required": ["temp"]
       }
     },
-    "contextKeys": [],
     "apiQuery": {
       "query": "query HighTemps2(\n    $temp: Float!\n) {\n    ReadingsAboveTemp(temp: $temp) {\n        sensorid\n        temperature\n    }\n}"
     }

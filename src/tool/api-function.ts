@@ -1,10 +1,5 @@
 import { ApiQuery, APIQueryExecutor } from "../api";
-import { addOrOverrideFromContext } from "../utils";
-import { Context, DefaultContext } from "./context";
-import {
-  FunctionDefinition,
-  FunctionDefinitionParameters,
-} from "./function-definition";
+import { FunctionDefinition } from "./function-definition";
 import { ValidationResult } from "./validation-result";
 
 export interface ToolCall {
@@ -38,10 +33,7 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     if (!Array.isArray(toolsToCall)) {
       // execute single tool
       const apiFunction = toolsMap.get(toolsToCall.name);
-      const res = await apiFunction?.validateAndExecute(
-        toolsToCall.arguments,
-        new DefaultContext(),
-      );
+      const res = await apiFunction?.validateAndExecute(toolsToCall.arguments);
       return res || "";
     }
 
@@ -56,7 +48,6 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
 
   constructor(
     func: FunctionDefinition,
-    public readonly contextKeys: Set<string>,
     public readonly apiQuery: TApiQuery,
     public readonly apiExecutor: APIQueryExecutor<TApiQuery>,
   ) {
@@ -74,50 +65,21 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     return this.function.name;
   }
 
-  getModelFunction(): FunctionDefinition {
-    const fieldFilter = APIFunction.getFieldFilter(this.contextKeys);
-
-    const newParams: FunctionDefinitionParameters = {
-      type: this.function.parameters.type,
-      required: this.function.parameters.required?.filter?.(fieldFilter),
-      properties: APIFunction.filterObjectKeys(
-        fieldFilter,
-        this.function.parameters.properties,
-      ),
-    };
-
-    return {
-      name: this.function.name,
-      description: this.function.description,
-      parameters: newParams,
-    };
-  }
-
   validate(argumentsNode: Record<string, unknown> = {}): ValidationResult {
-    return this.apiExecutor.validate(this.getModelFunction(), argumentsNode);
+    return this.apiExecutor.validate(this.function, argumentsNode);
   }
 
-  async execute<T extends {}>(
-    argumentsNode: Record<string, unknown> = {},
-    context: Context<T> = new DefaultContext(),
-  ): Promise<string> {
-    const variables = addOrOverrideFromContext(
-      argumentsNode,
-      this.contextKeys,
-      context,
-    );
-
+  async execute(variables: Record<string, unknown> = {}): Promise<string> {
     return this.apiExecutor.executeQuery(this.apiQuery, variables);
   }
 
-  async validateAndExecute<T extends {}>(
+  async validateAndExecute(
     argumentsNode: Record<string, unknown> = {},
-    context: Context<T> = new DefaultContext(),
   ): Promise<string> {
     const validationResult = this.validate(argumentsNode);
 
     if (validationResult.isValid()) {
-      return this.execute(argumentsNode, context);
+      return this.execute(argumentsNode);
     }
     throw new Error(
       APIFunction.createInvalidCallMessage(
@@ -127,13 +89,10 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     );
   }
 
-  async validateAndExecuteFromString<T extends {}>(
-    argsJson: string,
-    context: Context<T> = new DefaultContext(),
-  ): Promise<string> {
+  async validateAndExecuteFromString(argsJson: string): Promise<string> {
     try {
       const parsedArguments = JSON.parse(argsJson);
-      return this.validateAndExecute(parsedArguments, context);
+      return this.validateAndExecute(parsedArguments);
     } catch (error) {
       return APIFunction.createInvalidCallMessage(
         this.function.name,
@@ -142,32 +101,9 @@ export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
     }
   }
 
-  private static getFieldFilter(
-    fieldList: Set<string>,
-  ): (field: string) => boolean {
-    const contextFilter = new Set(
-      [...fieldList].map((field) => field.toLowerCase()),
-    );
-    return (field: string) => !contextFilter.has(field.toLowerCase());
-  }
-
-  private static filterObjectKeys<T extends {}>(
-    filter: (field: string) => boolean,
-    data: T,
-  ) {
-    const filteredKeys = Object.keys(data).filter(filter);
-    const filteredObject = filteredKeys.reduce<T>((acc, fieldKey) => {
-      const key = fieldKey as keyof T;
-      acc[key] = data[key];
-      return acc;
-    }, {} as T);
-    return filteredObject;
-  }
-
   public toJSON() {
     return {
       function: this.function,
-      contextKeys: Array.from(this.contextKeys),
       apiQuery: this.apiQuery,
     };
   }
