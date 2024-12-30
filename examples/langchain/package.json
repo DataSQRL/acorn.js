@@ -14,7 +14,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@datasqrl/acorn-node": "^1.1.0",
+    "@datasqrl/acorn-node": "^1.1.1",
     "@langchain/core": "^0.3.26",
     "@langchain/langgraph": "^0.2.34",
     "@langchain/openai": "^0.3.16",
