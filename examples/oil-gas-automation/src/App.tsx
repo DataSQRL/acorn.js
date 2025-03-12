@@ -26,7 +26,7 @@ function App() {
       // contains instructions for the OpenAI model
       const messages: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [{
         role: "user",
-        content: getPrompt(data.LowFlowRate.assetId)
+        content: getPrompt(data)
       }];
 
       let toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[] = [];

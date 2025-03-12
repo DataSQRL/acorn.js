@@ -1,5 +1,5 @@
-import OpenAI from 'openai';
-import { APIFunction, ApiQuery } from '@datasqrl/acorn-node';
+import OpenAI from "openai";
+import { APIFunction, ApiQuery } from "@datasqrl/acorn-node";
 
 export interface UseSetupResult {
   openAI: OpenAI;

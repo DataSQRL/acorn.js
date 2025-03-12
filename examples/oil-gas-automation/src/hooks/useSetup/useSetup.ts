@@ -1,18 +1,22 @@
-import { useEffect, useMemo, useState } from 'react';
-import OpenAI from 'openai';
+import { useEffect, useMemo, useState } from "react";
+import OpenAI from "openai";
 import {
   APIFunction,
   ApiQuery,
   createToolsFromApiUri,
-} from '@datasqrl/acorn-node';
-import { gql, useSubscription } from '@apollo/client';
-import { UseSetupResult } from './types.ts';
+} from "@datasqrl/acorn-node";
+import { gql, useSubscription } from "@apollo/client";
+import { UseSetupResult } from "./types.ts";
 
 export default function useSetup(): UseSetupResult {
-  const openAI = useMemo(() => new OpenAI({
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-    dangerouslyAllowBrowser: true,
-  }), []);
+  const openAI = useMemo(
+    () =>
+      new OpenAI({
+        apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true,
+      }),
+    [],
+  );
 
   const [apiTools, setApiTools] = useState<APIFunction<ApiQuery>[]>();
 

@@ -1,1 +1,1 @@
-export { default } from './useLogging';
+export { default } from "./useLogging";
