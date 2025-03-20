@@ -2,8 +2,8 @@ import {
   ChatPersistence,
   chatPersistence,
   createToolsFromApiUri,
-} from "@datasqrl/acorn-node";
-import { toOpenAiTools } from "@datasqrl/acorn-node/openai";
+} from "@datasqrl/acorn";
+import { toOpenAiTools } from "@datasqrl/acorn/openai";
 import OpenAI from "openai";
 import { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { printMessage } from "./print.utils";

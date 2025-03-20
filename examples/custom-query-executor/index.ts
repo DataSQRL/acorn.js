@@ -1,11 +1,5 @@
-import {
-  convertSchema,
-  StandardAPIFunctionFactory,
-} from "@datasqrl/acorn-node";
-import {
-  toOpenAiTools,
-  createOpenAiToolResults,
-} from "@datasqrl/acorn-node/openai";
+import { convertSchema, StandardAPIFunctionFactory } from "@datasqrl/acorn";
+import { toOpenAiTools, createOpenAiToolResults } from "@datasqrl/acorn/openai";
 import { OpenAI } from "openai";
 import { CustomApiQueryExecutor } from "./CustomApiQueryExecutor";
 

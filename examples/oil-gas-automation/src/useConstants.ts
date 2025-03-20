@@ -1,10 +1,6 @@
 import OpenAI from "openai";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import {
-  APIFunction,
-  ApiQuery,
-  createToolsFromApiUri
-} from "@datasqrl/acorn-node";
+import { APIFunction, ApiQuery, createToolsFromApiUri } from "@datasqrl/acorn";
 import { gql, useSubscription } from "@apollo/client";
 
 export const ACTION_TOOL: OpenAI.Chat.Completions.ChatCompletionTool = {
@@ -17,24 +13,19 @@ export const ACTION_TOOL: OpenAI.Chat.Completions.ChatCompletionTool = {
       properties: {
         type: {
           type: "string",
-          enum: [
-            "shut_off",
-            "hot_wax_treatment",
-            "full_inspection",
-            "ignore"
-          ],
-          description: "Type of action to take"
+          enum: ["shut_off", "hot_wax_treatment", "full_inspection", "ignore"],
+          description: "Type of action to take",
         },
         description: {
           type: "string",
-          description: "Explanation of why this action should be taken"
-        }
+          description: "Explanation of why this action should be taken",
+        },
       },
       required: ["type", "description"],
-      additionalProperties: false
+      additionalProperties: false,
     },
-    strict: true
-  }
+    strict: true,
+  },
 };
 
 export const getPrompt = (data: { LowFlowRate: { assetId: number } }) => `
@@ -45,10 +36,14 @@ export const getPrompt = (data: { LowFlowRate: { assetId: number } }) => `
 `;
 
 export const useConstants = () => {
-  const openAI = useMemo(() => new OpenAI({
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-    dangerouslyAllowBrowser: true
-  }), []);
+  const openAI = useMemo(
+    () =>
+      new OpenAI({
+        apiKey: import.meta.env.VITE_OPENAI_API_KEY,
+        dangerouslyAllowBrowser: true,
+      }),
+    [],
+  );
 
   const [apiTools, setApiTools] = useState<APIFunction<ApiQuery>[]>();
 
@@ -64,7 +59,7 @@ export const useConstants = () => {
     async function load() {
       const result = await createToolsFromApiUri({
         graphqlUri: import.meta.env.VITE_API_URL,
-        enableValidation: true
+        enableValidation: true,
       });
 
       if (!active) {
@@ -97,23 +92,29 @@ export const useConstants = () => {
     setLog("Monitoring...\n\nEvent arrived...");
   }, []);
 
-  const logToolCalls = useCallback((
-    toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[],
-    toolCallResults: OpenAI.Chat.Completions.ChatCompletionToolMessageParam[]
-  ) => {
-    toolCalls.forEach((toolCall) => {
-      let output = `'${toolCall.function.name}' function was called with such payload:\n${JSON.stringify(JSON.parse(toolCall.function.arguments), null, 2)}`;
-      const toolCallResult = toolCallResults.find(({ tool_call_id }) => (
-        tool_call_id === toolCall.id
-      ));
+  const logToolCalls = useCallback(
+    (
+      toolCalls: OpenAI.Chat.Completions.ChatCompletionMessageToolCall[],
+      toolCallResults: OpenAI.Chat.Completions.ChatCompletionToolMessageParam[],
+    ) => {
+      toolCalls.forEach((toolCall) => {
+        let output = `'${toolCall.function.name}' function was called with such payload:\n${JSON.stringify(JSON.parse(toolCall.function.arguments), null, 2)}`;
+        const toolCallResult = toolCallResults.find(
+          ({ tool_call_id }) => tool_call_id === toolCall.id,
+        );
 
-      if (toolCallResult?.content && typeof toolCallResult.content === "string") {
-        output += `\nGot such response:\n${JSON.stringify(JSON.parse(toolCallResult.content), null, 2)}`;
-      }
+        if (
+          toolCallResult?.content &&
+          typeof toolCallResult.content === "string"
+        ) {
+          output += `\nGot such response:\n${JSON.stringify(JSON.parse(toolCallResult.content), null, 2)}`;
+        }
 
-      appendLog(output);
-    });
-  }, [appendLog]);
+        appendLog(output);
+      });
+    },
+    [appendLog],
+  );
 
   return { openAI, apiTools, data, log, logEventArrived, logToolCalls };
 };

@@ -1,12 +1,15 @@
-# `@datasqrl/acorn-node` usage example with `langchain`.
+# `@datasqrl/acorn` usage example with `langchain`.
 
 This example contains Rick and morty API powered AI agent implementation.
 
-It creates LangGraph and supplies it with tools automatically created from GraphQL API.
+It creates LangGraph and supplies it with tools automatically created from
+GraphQL API.
 
-Basic setup of the agent can be found in [./rick-and-morty-agent.ts](./rick-and-morty-agent.ts).
+Basic setup of the agent can be found
+in [./rick-and-morty-agent.ts](./rick-and-morty-agent.ts).
 
-_Please take a note `@langchain/core` and `zod` must be installed in your project to use `@datasqrl/acorn-node/langchain`_
+_Please take a note `@langchain/core` and `zod` must be installed in your
+project to use `@datasqrl/acorn/langchain`_
 
 ## To run an example script
 

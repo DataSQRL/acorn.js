@@ -1,5 +1,5 @@
-import { createToolsFromApiUri } from "@datasqrl/acorn-node";
-import { toLangChainTools } from "@datasqrl/acorn-node/langchain";
+import { createToolsFromApiUri } from "@datasqrl/acorn";
+import { toLangChainTools } from "@datasqrl/acorn/langchain";
 import { MemorySaver } from "@langchain/langgraph";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";

@@ -13,7 +13,7 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
-    "@datasqrl/acorn-node": "^1.1.1",
+    "@datasqrl/acorn": "^2.1.1",
     "openai": "^4.77.0"
   }
 }

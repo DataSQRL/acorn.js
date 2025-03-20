@@ -1,11 +1,8 @@
-import { createToolsFromApiUri } from "@datasqrl/acorn-node";
+import { createToolsFromApiUri } from "@datasqrl/acorn";
 import { OpenAI } from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/index.mjs";
 import { printMessage, printToolUsage } from "./print.utils";
-import {
-  createOpenAiToolResults,
-  toOpenAiTools,
-} from "@datasqrl/acorn-node/openai";
+import { createOpenAiToolResults, toOpenAiTools } from "@datasqrl/acorn/openai";
 
 if (!process.env.OPENAI_API_KEY) {
   console.error("OPENAI_API_KEY env variable is missing!");

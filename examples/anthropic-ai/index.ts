@@ -1,11 +1,11 @@
 import Anthropic from "@anthropic-ai/sdk";
 import type { MessageParam } from "@anthropic-ai/sdk/resources/index.mjs";
-import { createToolsFromApiUri } from "@datasqrl/acorn-node";
+import { createToolsFromApiUri } from "@datasqrl/acorn";
 import { printMessage, printToolUsage } from "./print.utils";
 import {
   createAnthropicToolResult,
   toAnthropicAiTools,
-} from "@datasqrl/acorn-node/anthropic";
+} from "@datasqrl/acorn/anthropic";
 
 if (!process.env.ANTHROPIC_API_KEY) {
   console.error("ANTHROPIC_API_KEY env variable is missing!");

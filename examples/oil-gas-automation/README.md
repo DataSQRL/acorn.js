@@ -1,4 +1,4 @@
-# `@datasqrl/acorn-node` usage example with `oil-gas-automation`
+# `@datasqrl/acorn` usage example with `oil-gas-automation`
 
 This example contains "oil-gas-automation" API-powered AI agent implementation.
 

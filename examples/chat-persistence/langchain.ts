@@ -1,7 +1,7 @@
 import {
   persistenceFormatters,
   PersistentSaver,
-} from "@datasqrl/acorn-node/langchain";
+} from "@datasqrl/acorn/langchain";
 import { HumanMessage } from "@langchain/core/messages";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
 import { ChatOpenAI } from "@langchain/openai";

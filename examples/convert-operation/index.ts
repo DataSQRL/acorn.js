@@ -1,4 +1,4 @@
-import { convertOperations } from "@datasqrl/acorn-node";
+import { convertOperations } from "@datasqrl/acorn";
 
 const bootstrap = async () => {
   const converterConfig = {

@@ -13,7 +13,7 @@
     "typescript": "^5.8.2"
   },
   "dependencies": {
-    "@datasqrl/acorn-node": "^1.1.1",
+    "@datasqrl/acorn": "^2.1.1",
     "axios": "^1.8.3"
   }
 }

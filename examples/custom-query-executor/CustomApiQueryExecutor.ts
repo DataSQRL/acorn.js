@@ -4,7 +4,7 @@ import {
   ErrorType,
   FunctionDefinition,
   ValidationResult,
-} from "@datasqrl/acorn-node";
+} from "@datasqrl/acorn";
 import Ajv from "ajv";
 import axios from "axios";
 
