@@ -14,7 +14,7 @@ Acorn.js provides the following features:
 
 In short, Acorn.js eliminates boilerplate code when building chatbots and agents that interact with APIs. It integrates GraphQL APIs with LLMs in a small library that you can extend to suit your needs.
 
-[//]: # '![Acorn](img/acorn_logo.jpeg){:height="200px"}'
+![Acorn](img/acron_diagram.svg)
 
 ## Getting Started
 
@@ -44,7 +44,7 @@ const llmTools = await createToolsFromApiUri({
   graphqlUri: "https://rickandmortyapi.graphcdn.app/",
   enableValidation: true,
 });
-//This is all standard OpenAI completions code
+//This is all standard OpenAI completions code to process the message
 const messages: ChatCompletionMessageParam[] = [];
 const userRequest: ChatCompletionMessageParam = {
   role: "user",
@@ -141,5 +141,4 @@ In addition, Acorn.js provides the following modules for native integrations wit
 
 ## Contributing
 
-We encourage contributions. Open an issue if you encounter a bug or have a feature request.
-See: contributing.. contributors
+We love contributions. Open an issue if you encounter a bug or have a feature request. See [CONTRIBUTING.md](./CONTRIBUTING.md) for more details.

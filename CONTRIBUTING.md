@@ -1,17 +1,17 @@
-## Contributing to DataSQRL
+## Contributing to Acorn
 
-Thanks for your interest in DataSQRL.
+Thanks for your interest in DataSQRL's Acorn.
 
 # Contributions
 
-DataSQRL welcomes contributions from anyone.
+We welcome contributions from anyone.
 
 Submit a pull request and it will be reviewed by a contributor or committer in the project. The
 contributor may ask for changes or information before being accepted.
 
 ## Committers
 
-Committers for this project are documented in the project's [COMMITERS](COMMITTERS.md) file.
+Committers for this project can be viewed on the Github project page.
 
 # Sign Your Work
 
@@ -104,4 +104,4 @@ gpg --armor --export D2A162EAE1016F3G
 
 ## License
 
-By contributing to Acorn, you agree that your contributions will be licensed under the Elastic License 2.0.
+By contributing to Acorn, you agree that your contributions will be licensed under the Apache License 2.0.
