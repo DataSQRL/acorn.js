@@ -7,6 +7,10 @@ export interface ToolCall {
   arguments: Record<string, unknown>;
 }
 
+/**
+ * This is the internal definition of an API function/tool that can be invoked
+ * and provided to an LLM as a tool.
+ */
 export class APIFunction<TApiQuery extends ApiQuery = ApiQuery> {
   public static readonly createInvalidCallMessage = (
     functionName: string,

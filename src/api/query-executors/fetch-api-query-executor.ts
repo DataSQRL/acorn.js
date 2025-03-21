@@ -10,8 +10,8 @@ export interface FetchApiQueryExecutorConfig {
 }
 
 /**
- * Default executor that always says function definition is valid
- * and returns "void" as execution result
+ * Class that handles executing API queries using the Fetch API and validates query
+ * parameters with Ajv.
  */
 export class FetchApiQueryExecutor<TApiQuery extends ApiQuery = ApiQuery>
   implements APIQueryExecutor<TApiQuery>

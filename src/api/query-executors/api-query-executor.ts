@@ -2,6 +2,9 @@ import { FunctionDefinition } from "../../tool/function-definition";
 import { ValidationResult } from "../../tool/validation-result";
 import { ApiQuery } from "../api-query";
 
+/**
+ * Interface for validating and executing APIQuery
+ */
 export interface APIQueryExecutor<TApiQuery extends ApiQuery = ApiQuery> {
   enableValidation: boolean;
   /**
