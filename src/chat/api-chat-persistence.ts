@@ -8,6 +8,10 @@ export interface APIChatPersistenceFactoryConfig {
   getMessagesQuery: string;
 }
 
+/**
+ * Represents a class for managing chat message persistence against an API.
+ * This class stores and retrieves messages.
+ */
 export class APIChatPersistence<
   TChatMessage,
   TApiQuery extends ApiQuery = ApiQuery,

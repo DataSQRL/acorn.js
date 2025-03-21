@@ -4,7 +4,7 @@
 
 ### 1. Notify the team
 
-Announce that you are releasing in the #engineering channel.
+Announce to the engineering team that you are releasing to the team at least 1 day ahead of time unless this is a scheduled release.
 
 ### 2. Ensure you are on the main branch
 
@@ -81,12 +81,12 @@ For the automated release to work, you need to set up an NPM token:
 
 ### 1. Check NPM
 
-Verify the package is published on NPM: https://www.npmjs.com/package/@datasqrl/acorn.js
+Verify the package is published on NPM: https://www.npmjs.com/package/@datasqrl/acorn
 
 ### 2. Install the new version
 
 ```bash
-npm install @datasqrl/acorn.js@latest
+npm install @datasqrl/acorn@latest
 ```
 
 ### 3. Test in a project
@@ -95,4 +95,4 @@ Test the new version in a real project to confirm it works as expected.
 
 ### 4. Announce release completion
 
-Go to the #engineering channel and announce that the release is complete.
+Announce that the release is complete.
