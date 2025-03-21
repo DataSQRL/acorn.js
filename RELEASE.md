@@ -1,4 +1,4 @@
-# How to Release @datasqrl/acorn-node
+# How to Release @datasqrl/acorn.js
 
 ## Prepare for release
 
@@ -40,7 +40,7 @@ git push
 
 ### 1. Go to GitHub Releases
 
-Navigate to the repository's Releases page: https://github.com/DataSQRL/acorn-node/releases
+Navigate to the repository's Releases page: https://github.com/DataSQRL/acorn.js/releases
 
 ### 2. Draft a new release
 
@@ -81,12 +81,12 @@ For the automated release to work, you need to set up an NPM token:
 
 ### 1. Check NPM
 
-Verify the package is published on NPM: https://www.npmjs.com/package/@datasqrl/acorn-node
+Verify the package is published on NPM: https://www.npmjs.com/package/@datasqrl/acorn.js
 
 ### 2. Install the new version
 
 ```bash
-npm install @datasqrl/acorn-node@latest
+npm install @datasqrl/acorn.js@latest
 ```
 
 ### 3. Test in a project

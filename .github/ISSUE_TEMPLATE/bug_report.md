@@ -22,7 +22,7 @@ A clear and concise description of what you expected to happen.
 **Environment**
 
 - Node.js version:
-- acorn-node version:
+- acorn.js version:
 - OS:
 
 **Additional context**
