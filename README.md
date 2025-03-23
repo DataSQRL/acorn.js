@@ -14,7 +14,7 @@ Acorn.js provides the following features:
 
 In short, Acorn.js eliminates boilerplate code when building chatbots and agents that interact with APIs. It integrates GraphQL APIs with LLMs in a small library that you can extend to suit your needs.
 
-![Acorn](img/acron_diagram.svg)
+![Acorn](img/acorn_diagram.svg)
 
 ## Getting Started
 
