@@ -5,7 +5,7 @@ const bootstrap = async () => {
     graphqlUri: "https://rickandmortyapi.graphcdn.app/",
     enableValidation: true,
   };
-  const [highTemperatureTool] = convertOperations(
+  const [lookupCharacterTool] = convertOperations(
     `
 query character($id: ID!) {
   character(id: $id) {
@@ -44,12 +44,12 @@ query character($id: ID!) {
   );
 
   console.log("Converted APIFunction:");
-  console.log(JSON.stringify(highTemperatureTool.toJSON(), null, 2));
+  console.log(JSON.stringify(lookupCharacterTool.toJSON(), null, 2));
 
   // Note, result is returned as a string, so you may want to parse it
   // (usually using `JSON.parse(result)`)
   // to further process received data.
-  const result = await highTemperatureTool.validateAndExecute({ id: "1" });
+  const result = await lookupCharacterTool.validateAndExecute({ id: "1" });
 
   console.log("Info about character with id: 1");
   console.log(result);
