@@ -1,10 +1,11 @@
-# How to Release @datasqrl/acorn.js
+# How to Release @datasqrl/acorn
 
 ## Prepare for release
 
 ### 1. Notify the team
 
-Announce that you are releasing in the #engineering channel.
+Announce to the engineering team that you are releasing at least 1 day ahead of
+time unless this is a scheduled release.
 
 ### 2. Ensure you are on the main branch
 
@@ -28,26 +29,27 @@ npm run build
 
 ### 5. Commit changes
 
-Create a commit with the message `Release v{version}` and push:
+Create a commit with the message `Release {version}` and push:
 
 ```bash
 git add package.json
-git commit -m "Release v{version}"
-git push
+git commit -m "Release {version}"
+git push origin main
 ```
 
 ## Create GitHub Release
 
 ### 1. Go to GitHub Releases
 
-Navigate to the repository's Releases page: https://github.com/DataSQRL/acorn.js/releases
+Navigate to the repository's Releases
+page: https://github.com/DataSQRL/acorn.js/releases
 
 ### 2. Draft a new release
 
-Click "Draft a new release" and fill in the following:
+Click "Create a new release" and fill in the following:
 
-- Tag version: v{version} (e.g., v1.2.0)
-- Release title: v{version}
+- Tag version: {version} (e.g., 1.2.0)
+- Release title: {version}
 - Description: List major changes, features, and bug fixes
 
 ### 3. Publish the release
@@ -81,12 +83,13 @@ For the automated release to work, you need to set up an NPM token:
 
 ### 1. Check NPM
 
-Verify the package is published on NPM: https://www.npmjs.com/package/@datasqrl/acorn.js
+Verify the package is published on
+NPM: https://www.npmjs.com/package/@datasqrl/acorn
 
 ### 2. Install the new version
 
 ```bash
-npm install @datasqrl/acorn.js@latest
+npm install @datasqrl/acorn@latest
 ```
 
 ### 3. Test in a project
@@ -95,4 +98,4 @@ Test the new version in a real project to confirm it works as expected.
 
 ### 4. Announce release completion
 
-Go to the #engineering channel and announce that the release is complete.
+Announce that the release is complete.
