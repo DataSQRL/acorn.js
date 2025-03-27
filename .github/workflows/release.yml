@@ -2,7 +2,7 @@ name: Release Package
 
 on:
   release:
-    types: [created]
+    types: [ created ]
 
 jobs:
   build:
@@ -13,16 +13,22 @@ jobs:
         with:
           node-version: '18.x'
           registry-url: 'https://registry.npmjs.org/'
-      
+
+      - name: Install examples' dependencies
+        run: |
+          cd examples/custom-query-executor
+          npm install
+          cd ../..
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run tests
         run: npm test
-      
+
       - name: Build
         run: npm run build
-      
+
       - name: Publish to NPM
         run: npm publish
         env:
