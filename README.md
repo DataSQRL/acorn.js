@@ -163,6 +163,8 @@ LLMs are expensive—especially if you rely on them to hallucinate long, complex
 
 Structured APIs return results in milliseconds. LLMs, on the other hand, have to stream outputs and sometimes retry when things go wrong. By using Acorn.js to define clear tool boundaries, you minimize guesswork and retries, speeding up the overall response cycle of your chatbot or agent.
 
+![Acorn](img/acorn_graphql_openai.png)
+
 ### Why GraphQL APIs?
 
 In the context of building GenAI applications, GraphQL is a great choice because it provides the right balance between flexibility, ease-of-use, semantics, widespread support, and schema validation.
