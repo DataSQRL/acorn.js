@@ -6,9 +6,6 @@ It waits to receive low flow rate events over subscription, queries and analyzes
 data provided by the "oil-gas-automation" API, and takes necessary action (or
 does not).
 
-The basic setup of the "oil-gas-automation" API can be
-found [there](https://github.com/DataSQRL/datasqrl-examples/tree/main/oil-gas-agent-automation).
-
 ## To start the project:
 
 1. Install dependencies:
@@ -19,7 +16,13 @@ npm ci
 
 2. Create `.env.local` using [`.env.example`](.env.example) as template
 
-3. Run in development mode
+3. Run the data backend:
+
+```shell
+ docker run -it -p 8888:8888 -p 8081:8081 -p 9092:9092 --rm -e TZ=“UTC” datasqrl/examples:oil-gas run -c package-local.json
+```
+
+4. Run the example in development mode
 
 ```sh
 npm run dev
